@@ -1,13 +1,12 @@
 local config = require("docgen.config")
+local core = require("docgen.core")
 
 local M = {}
 
 function M.setup(user_config)
     config.setup(user_config)
-
-    vim.notify(config.get_config("runner"), vim.log.levels.INFO)
-    vim.notify(config.get_config("model"), vim.log.levels.INFO)
-    vim.notify(config.get_config("prompt_template"), vim.log.levels.INFO)
 end
+
+vim.api.nvim_create_user_command("DocgenGenerate", core.generate, {})
 
 return M
