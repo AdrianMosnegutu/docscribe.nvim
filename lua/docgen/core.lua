@@ -1,5 +1,6 @@
 local ts_utils = require("nvim-treesitter.ts_utils")
 local llm = require("docgen.llm")
+local ui = require("docgen.ui")
 
 local M = {}
 
@@ -55,29 +56,58 @@ local function get_node_text(node)
 	return table.concat(lines, "\n")
 end
 
+--- Inserts a multiline string directly above the given Tree-sitter node in the buffer.
+---
+--- @param node TSNode: The Tree-sitter node to insert above.
+--- @param text string: The text to insert. Can include newline characters.
+local function insert_lines_above_node(node, text)
+    if not node or not text or text == "" then
+        return
+    end
+
+    -- Remove trailing newlines
+    text = text:gsub("\n+$", "")
+
+    local bufnr = vim.api.nvim_get_current_buf()
+    local start_row = node:range() -- 0-indexed line where the node starts
+
+    -- Split the text into lines
+    local lines = vim.split(text, "\n", { plain = true })
+
+    vim.api.nvim_buf_set_lines(bufnr, start_row, start_row, false, lines)
+end
+
 function M.generate()
 	-- Retrieve the function node in which the cursor resided
 	local function_node, function_node_err = get_function_node()
 	if not function_node then
-		vim.notify("[docgen] " .. function_node_err, vim.log.levels.ERROR)
+		--- @diagnostic disable-next-line: param-type-mismatch
+		ui.docgen_notify(function_node_err, vim.log.levels.ERROR)
 		return
 	end
 
 	-- Retrieve thr function node's code
 	local function_code, node_text_err = get_node_text(function_node)
 	if not function_code then
-		vim.notify("[docgen] " .. node_text_err, vim.log.levels.ERROR)
+		--- @diagnostic disable-next-line: param-type-mismatch
+		ui.docgen_notify(node_text_err, vim.log.levels.ERROR)
 		return
 	end
+
+	ui.start_spinner_notification()
 
 	-- Generate asynchronously the docs using the preferred llm
 	llm.generate_docs(function_code, function(docs)
 		if not docs then
-			vim.notify("Could not generate docs", vim.log.levels.ERROR)
+			ui.stop_spinner_notification("Could not generate docs", true)
 			return
 		end
 
-		vim.notify(docs)
+		ui.stop_spinner_notification("Successfully generated docs")
+
+		vim.schedule(function()
+			insert_lines_above_node(function_node, docs)
+		end)
 	end)
 end
 
