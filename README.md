@@ -6,6 +6,12 @@ _docgen.nvim_ is a plugin for Neovim that generates inline documentation for you
 
 ⚠️ **Warning**: This plugin is currently unstable and actively being worked on. It’s not recommended for production use at the moment, and the features are still in development. If you’re interested in following along or contributing, feel free to check out the code or give it a try, but be aware that there might be bugs and unfinished features.
 
+## Demo
+
+Here’s a quick demo of how the plugin works:
+
+![Demo GIF](media/demo.gif)
+
 ## Current Features
 
 - **TypeScript/JavaScript Inline Documentation**: Easily generate and insert documentation directly above your TS/JS functions.
@@ -62,12 +68,6 @@ To generate docs for a function, simply move your cursor to the function and run
 ```
 
 The plugin will automatically generate and insert documentation for the function at the cursor.
-
-## Demo
-
-Here’s a quick demo of how the plugin works:
-
-[Screen Recording]
 
 ## Current Status
 
