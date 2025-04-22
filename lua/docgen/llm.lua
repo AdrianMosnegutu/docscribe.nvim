@@ -43,7 +43,7 @@ function M.generate_using_ollama(prompt, model, callback)
 				local docs = table.concat(job:result(), "\n")
 				callback(docs)
 			else
-				vim.notify("Error generating Ollama response", vim.log.levels.ERROR, { title = "docgen.lua" })
+                ui.docgen_notify("Error generating Ollama response", vim.log.levels.ERROR)
 				callback(nil)
 			end
 		end,
