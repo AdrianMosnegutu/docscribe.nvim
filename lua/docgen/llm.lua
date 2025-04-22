@@ -9,12 +9,15 @@ local M = {}
 --- @param callback fun(docs: string | nil): nil callback function that receives the generated docs,
 --- or nil if generation failed.
 function M.generate_docs(function_code, callback)
+    -- Build the prompt using the template and provided code
 	local prompt_template = config.get_config("prompt_template")
 	local prompt = prompt_template:gsub("{{code}}", function_code)
 
+    -- Get the llm details
 	local runner = config.get_config("runner")
 	local model = config.get_config("model")
 
+    -- Execute a query based on the preferred llm
 	if runner == "ollama" then
 		M.generate_using_ollama(prompt, model, callback)
 	else
