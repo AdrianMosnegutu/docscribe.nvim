@@ -6,7 +6,7 @@ local M = {}
 function M.setup(user_config)
 	config.setup(user_config)
 
-	vim.api.nvim_create_user_command("DocgenGenerate", core.generate, {})
+	vim.api.nvim_create_user_command("DocGen", core.generate, {})
 end
 
 return M
