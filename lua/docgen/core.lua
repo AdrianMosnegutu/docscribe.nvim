@@ -114,7 +114,7 @@ function M.generate_docs_for_function_under_cursor()
     end
 
     ui.start_spinner_notification()
-    ui.highlight_node(function_node)
+    ui.highlight_signature(function_node)
     ui.jump_to_node_start(function_node)
 
     is_generating = true

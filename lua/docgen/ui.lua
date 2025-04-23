@@ -84,16 +84,9 @@ function M.docgen_notify(message, log_level, opts)
     return vim.notify(message, log_level, opts)
 end
 
---- Highlights all lines corresponding to a given function node in the current buffer.
---- Used to visually indicate which function is currently being processed.
----
---- @param node TSNode: The Tree-sitter node representing the function to highlight.
-function M.highlight_node(node)
-    local start_row, _, end_row, _ = node:range()
-
-    for i = start_row, end_row do
-        vim.api.nvim_buf_add_highlight(0, ns_id, "DocgenProcessing", i, 0, -1)
-    end
+function M.highlight_signature(function_node)
+    local start_row = function_node:range()
+    vim.api.nvim_buf_add_highlight(0, ns_id, "DocgenProcessing", start_row, 0, -1)
 end
 
 --- Clears all highlights related to the docgen process from the current buffer.
