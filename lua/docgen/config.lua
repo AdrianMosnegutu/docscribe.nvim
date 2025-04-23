@@ -1,9 +1,12 @@
 local M = {}
 
 local config = {
-	runner = "ollama",
-	model = "llama3.2",
-	prompt_template = [[
+    ui = {
+        highlight_color = "#545454",
+    },
+    runner = "ollama",
+    model = "llama3.2",
+    prompt_template = [[
         You are a documentation assistant.
 
         Generate a **TypeScript TSDoc** comment block for the function below. The output must:
@@ -28,14 +31,14 @@ local config = {
 --- Sets up the plugin configuration by merging user-provided values with defaults.
 --- @param user_config table: A table containing user-defined configuration options.
 function M.setup(user_config)
-	config = vim.tbl_deep_extend("force", config, user_config)
+    config = vim.tbl_deep_extend("force", config, user_config)
 end
 
 --- Retrieves a value from the plugin configuration.
 --- @param key string: The key corresponding to the configuration value to retrieve.
 --- @return any: The value associated with the given key, or nil if it doesn't exist.
 function M.get_config(key)
-	return config[key]
+    return config[key]
 end
 
 return M
