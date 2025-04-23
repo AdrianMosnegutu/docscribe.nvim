@@ -121,6 +121,8 @@ call dein#add('AdrianMosnegutu/docgen.nvim')
 
 You can override any of these configurations in your Neovim setup file to customize the plugin's behavior.
 
+⚠️ Warning: The `prompt_template` must include a `{{code}}` placeholder. This placeholder will be replaced by the actual function code during documentation generation. Without it, the plugin will not know where to place the code, leading to unexpected behavior.
+
 ---
 
 ## 🚀 Usage
