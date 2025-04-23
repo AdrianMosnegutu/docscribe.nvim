@@ -2,6 +2,7 @@ local M = {}
 
 local config = {
     ui = {
+        highlight = "signature", -- What part of the function to highlight: "full", "signature", "none"
         highlight_color = "#545454", -- Default function highlight color used in the UI
     },
     runner = "ollama",         -- Default runner for executing model tasks

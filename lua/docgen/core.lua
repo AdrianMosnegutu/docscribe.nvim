@@ -1,6 +1,7 @@
 local ts_utils = require("nvim-treesitter.ts_utils")
 local llm = require("docgen.llm")
 local ui = require("docgen.ui")
+local config = require("docgen.config")
 
 local M = {}
 
@@ -76,11 +77,61 @@ local function insert_lines_above_node(node, text)
     vim.api.nvim_buf_set_lines(bufnr, start_row, start_row, false, lines)
 end
 
---- Generates documentation for the function currently under the cursor.
+--- Internal function that handles the end-to-end process of generating documentation
+--- for a given function node and its corresponding source text.
 ---
---- If a generation is already in progress, notifies the user and aborts.
---- Otherwise, it locates the function, extracts the code, shows UI feedback,
---- invokes the configured LLM to generate documentation, and inserts it above the function.
+--- This function:
+--- 1. Activates visual highlights on the target function (full body or signature only, based on config).
+--- 2. Starts a spinner notification to indicate progress.
+--- 3. Moves the cursor to the function's start for visual alignment.
+--- 4. Sends the function's source code to the configured LLM.
+--- 5. Once documentation is received, inserts it above the function in the buffer.
+--- 6. Handles errors gracefully by notifying the user and cleaning up the UI state.
+---
+--- @param function_node TSNode A Tree-sitter node representing the function to document.
+--- @param function_text string The raw source code text of the function to send to the LLM.
+---
+--- @return nil
+local function generate_docs(function_node, function_text)
+    is_generating = true
+
+    local highlight_mode = config.get_config("ui").highlight
+    if highlight_mode == "full" then
+        ui.highlight_node(function_node)
+    elseif highlight_mode == "signature" then
+        ui.highlight_signature(function_node)
+    end
+
+    ui.start_spinner_notification()
+    ui.jump_to_node_start(function_node)
+
+    llm.generate_docs(function_text, function(docs)
+        is_generating = false
+
+        if not docs then
+            ui.stop_spinner_notification("Could not generate docs", true)
+            vim.schedule(ui.clear_highlight)
+            return
+        end
+
+        vim.schedule(function()
+            insert_lines_above_node(function_node, docs)
+            ui.stop_spinner_notification("Successfully generated docs")
+            ui.clear_highlight()
+        end)
+    end)
+end
+
+--- Public entry point for generating documentation for the function under the cursor.
+---
+--- This function:
+--- 1. Verifies that no generation task is currently running (debounces overlapping calls).
+--- 2. Attempts to locate the nearest function node using Tree-sitter. Notifies on failure.
+--- 3. Extracts the source text of the identified node. Notifies on failure.
+--- 4. If all validations pass, delegates the actual doc generation to the internal `generate_docs` function.
+---
+--- UI feedback is provided at every step: errors show as notifications, and generation progress is visualized
+--- through highlights and a spinner.
 ---
 --- @return nil
 function M.generate_docs_for_function_under_cursor()
@@ -96,33 +147,14 @@ function M.generate_docs_for_function_under_cursor()
         return
     end
 
-    local function_code, node_text_err = get_node_text(function_node)
-    if not function_code then
+    local function_text, node_text_err = get_node_text(function_node)
+    if not function_text then
         --- @diagnostic disable-next-line: param-type-mismatch
         ui.docgen_notify(node_text_err, vim.log.levels.ERROR)
         return
     end
 
-    ui.start_spinner_notification()
-    ui.highlight_signature(function_node)
-    ui.jump_to_node_start(function_node)
-
-    is_generating = true
-
-    llm.generate_docs(function_code, function(docs)
-        if not docs then
-            ui.stop_spinner_notification("Could not generate docs", true)
-            return
-        end
-
-        vim.schedule(function()
-            insert_lines_above_node(function_node, docs)
-            is_generating = false
-
-            ui.stop_spinner_notification("Successfully generated docs")
-            ui.clear_highlight()
-        end)
-    end)
+    generate_docs(function_node, function_text)
 end
 
 return M

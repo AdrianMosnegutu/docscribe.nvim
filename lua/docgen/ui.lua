@@ -98,6 +98,18 @@ function M.highlight_signature(function_node)
     vim.api.nvim_buf_add_highlight(0, ns_id, "DocgenProcessing", start_row, 0, -1)
 end
 
+--- Highlights all lines corresponding to a given function node in the current buffer.
+--- Used to visually indicate which function is currently being processed.
+---
+--- @param node TSNode The Tree-sitter node representing the function to highlight.
+function M.highlight_node(node)
+    local start_row, _, end_row, _ = node:range()
+
+    for i = start_row, end_row do
+        vim.api.nvim_buf_add_highlight(0, ns_id, "DocgenProcessing", i, 0, -1)
+    end
+end
+
 --- Clears all highlights added by the docgen process in the current buffer.
 ---
 --- This should be called after the documentation generation is completed or canceled.
