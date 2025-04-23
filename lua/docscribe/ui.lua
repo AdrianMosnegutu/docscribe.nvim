@@ -1,6 +1,6 @@
 local M = {}
 
-local ns_id = vim.api.nvim_create_namespace("docgen_highlight")
+local ns_id = vim.api.nvim_create_namespace("docscribe_highlight")
 
 local spinner_chars = { "|", "/", "-", "\\" }
 local current_spinner_idx = 0
@@ -31,7 +31,7 @@ function M.start_spinner_notification()
         current_spinner_idx = (current_spinner_idx % #spinner_chars) + 1
 
         spinner_notification_id =
-            M.docgen_notify(spinner_chars[current_spinner_idx] .. " Generating docs...", vim.log.levels.WARN, {
+            M.docscribe_notify(spinner_chars[current_spinner_idx] .. " Generating docs...", vim.log.levels.WARN, {
                 timeout = false,
                 hide_from_history = true,
                 replace = spinner_notification_id,
@@ -63,8 +63,8 @@ function M.stop_spinner_notification(message, caught_error)
     local log_level = caught_error and vim.log.levels.ERROR or vim.log.levels.INFO
 
     if spinner_notification_id then
-        M.docgen_notify(message, log_level, {
-            timeout = 3000,
+        M.docscribe_notify(message, log_level, {
+            timeout = 2000,
             hide_from_history = false,
             replace = spinner_notification_id,
         })
@@ -72,16 +72,16 @@ function M.stop_spinner_notification(message, caught_error)
     end
 end
 
---- Displays a notification with a fixed title "docgen.lua".
+--- Displays a notification with a fixed title "docscribe.nvim".
 ---
 --- @param message string The content of the notification.
 --- @param log_level integer The severity level of the notification (e.g., `vim.log.levels.INFO`, `vim.log.levels.WARN`, `vim.log.levels.ERROR`).
 --- @param opts table|nil Additional options for the notification. If not provided, default options are used.
 ---
 --- @return nil
-function M.docgen_notify(message, log_level, opts)
+function M.docscribe_notify(message, log_level, opts)
     opts = opts or {}
-    opts.title = "docgen.nvim"
+    opts.title = "docscribe.nvim"
     return vim.notify(message, log_level, opts)
 end
 
@@ -95,7 +95,7 @@ end
 --- @return nil
 function M.highlight_signature(function_node)
     local start_row = function_node:range()
-    vim.api.nvim_buf_add_highlight(0, ns_id, "DocgenProcessing", start_row, 0, -1)
+    vim.api.nvim_buf_add_highlight(0, ns_id, "DocscribeProcessing", start_row, 0, -1)
 end
 
 --- Highlights all lines corresponding to a given function node in the current buffer.
@@ -106,11 +106,11 @@ function M.highlight_node(node)
     local start_row, _, end_row, _ = node:range()
 
     for i = start_row, end_row do
-        vim.api.nvim_buf_add_highlight(0, ns_id, "DocgenProcessing", i, 0, -1)
+        vim.api.nvim_buf_add_highlight(0, ns_id, "DocscribeProcessing", i, 0, -1)
     end
 end
 
---- Clears all highlights added by the docgen process in the current buffer.
+--- Clears all highlights added by the docscribe process in the current buffer.
 ---
 --- This should be called after the documentation generation is completed or canceled.
 ---

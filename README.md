@@ -1,6 +1,6 @@
 <div align="center">
 
-# ✨ docgen.nvim ✨
+# ✨ docscribe.nvim ✨
 
 **A Neovim plugin for effortless inline documentation using Language Models (LLMs)**
 
@@ -10,15 +10,15 @@
 
 ## 🚧 Work in Progress – Not Recommended for Production 🚧
 
-**docgen.nvim** is a cutting-edge Neovim plugin designed to seamlessly generate inline documentation for your code using the power of Language Models (LLMs). Whether you're a seasoned developer or just starting out, docgen.nvim aims to make documenting your code effortless and efficient—all within your favorite editor.
+`docscribe.nvim` is a cutting-edge Neovim plugin designed to seamlessly generate inline documentation for your code using the power of Language Models (LLMs). Whether you're a seasoned developer or just getting started, docscribe.nvim aims to make documenting your code easier and more efficient.
 
-⚠️ **Important Notice**: This plugin is currently under active development and is not yet stable for production use. Expect bugs, unfinished features, and rapid iterations. Feel free to explore and contribute, but proceed with caution if using in critical workflows.
+⚠️ **Important Notice**: This plugin is currently under active development and is not yet stable for production use. Expect bugs, unfinished features, and rapid iterations. Feel free to explore and contribute!
 
 ---
 
 ## 🎥 Demo
 
-See docgen.nvim in action:
+See `docscribe.nvim` in action:
 
 ![Demo GIF](media/demo.gif)
 
@@ -54,39 +54,39 @@ See docgen.nvim in action:
 
 ## ⚙️ Installation
 
-Install `docgen.nvim` using your favorite Neovim plugin manager:
+Install `docscribe.nvim` using your favorite Neovim plugin manager:
 
 ### [Packer.nvim](https://github.com/wbthomason/packer.nvim)
 
 ```lua
-use 'AdrianMosnegutu/docgen.nvim'
+use 'AdrianMosnegutu/docscribe.nvim'
 ```
 
 ### [Lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
 require('lazy').setup({
-  'AdrianMosnegutu/docgen.nvim'
+  'AdrianMosnegutu/docscribe.nvim'
 })
 ```
 
 ### [Vim-Plug](https://github.com/junegunn/vim-plug)
 
 ```lua
-Plug 'AdrianMosnegutu/docgen.nvim'
+Plug 'AdrianMosnegutu/docscribe.nvim'
 ```
 
 ### [dein.vim](https://github.com/Shougo/dein.vim)
 
 ```lua
-call dein#add('AdrianMosnegutu/docgen.nvim')
+call dein#add('AdrianMosnegutu/docscribe.nvim')
 ```
 
 ---
 
 ## ⚙️ Configuration
 
-`docgen.nvim` provides several configuration options to tailor the plugin to your needs. Below are the default configurations:
+`docscribe.nvim` provides several configuration options to tailor the plugin to your needs. Below are the default configurations:
 
 ````lua
 {
@@ -119,9 +119,9 @@ call dein#add('AdrianMosnegutu/docgen.nvim')
 }
 ````
 
-You can override any of these configurations in your Neovim setup file to customize the plugin's behavior.
+⚠️ **Warning**: The `prompt_template` must include a `{{code}}` placeholder. This placeholder will be replaced by the actual function code during documentation generation. Without it, the plugin will not know where to place the code, leading to unexpected behavior.
 
-⚠️ Warning: The `prompt_template` must include a `{{code}}` placeholder. This placeholder will be replaced by the actual function code during documentation generation. Without it, the plugin will not know where to place the code, leading to unexpected behavior.
+You can override any of these configurations in your Neovim setup file to customize the plugin's behavior.
 
 ---
 
@@ -130,10 +130,10 @@ You can override any of these configurations in your Neovim setup file to custom
 Generating documentation is as simple as moving your cursor to a function and running:
 
 ```vim
-:DocGen
+:DocscribeGenerate
 ```
 
-Let `docgen.nvim` handle the rest!
+Let `docscribe.nvim` handle the rest!
 
 ---
 
@@ -147,7 +147,7 @@ Let `docgen.nvim` handle the rest!
 
 ## 🤝 Contributing
 
-Contributions are welcome! Whether it’s reporting a bug, suggesting a feature, or submitting a pull request, your help is invaluable in shaping the future of `docgen.nvim`. Check out the [issues](https://github.com/AdrianMosnegutu/docgen.nvim/issues) to get started.
+Contributions are welcome! Whether it’s reporting a bug, suggesting a feature, or submitting a pull request, your help is invaluable in shaping the future of `docscribe.nvim`. Check out the [issues](https://github.com/AdrianMosnegutu/docscribe.nvim/issues) page to get started.
 
 ---
 
