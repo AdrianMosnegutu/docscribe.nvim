@@ -66,6 +66,7 @@ end
 --- @param text string The documentation text to insert.
 local function insert_lines_above_node(node, text)
     if not node or not text or text == "" then
+        ui.docgen_notify("Could not insert docs: invalid function", vim.log.levels.ERROR)
         return
     end
 
