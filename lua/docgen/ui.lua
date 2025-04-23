@@ -7,8 +7,11 @@ local current_spinner_idx = 0
 local spinner_timer
 local spinner_notification_id
 
---- Starts an animated spinner notification indicating that documentation is being
---- generated for a given function.
+--- Starts an animated spinner notification for documenting a function.
+---
+--- This function initiates a timer-driven spinner animation in the status line,
+--- providing real-time feedback that documentation is being generated for a function.
+--- The spinner stops once the documentation generation is complete, and a final message is displayed.
 ---
 --- @return nil
 function M.start_spinner_notification()
@@ -41,12 +44,13 @@ function M.start_spinner_notification()
     end)
 end
 
---- Stops the spinner animation and replaces the notification with a final message.
+--- Stops the spinner animation and displays the final message.
 ---
---- @param message string: The message to display in the final notification
---- (e.g., success or error message).
---- @param caught_error boolean|nil: A flag indicating whether the notification should be an
---- error (`true`) or informational (`false`).
+--- This function stops the spinner and replaces the notification with a success or error message,
+--- depending on the `caught_error` flag.
+---
+--- @param message string The message to display (e.g., success or error).
+--- @param caught_error boolean|nil If true, the message is displayed as an error; otherwise, as informational.
 ---
 --- @return nil
 function M.stop_spinner_notification(message, caught_error)
@@ -68,14 +72,11 @@ function M.stop_spinner_notification(message, caught_error)
     end
 end
 
---- Displays a notification with a fixed title of "docgen.lua". The notification can
---- include custom message content, log level, and options.
+--- Displays a notification with a fixed title "docgen.lua".
 ---
---- @param message string: The message to display in the notification.
---- @param log_level integer: The log level for the notification, which determines the
---- severity (e.g., `vim.log.levels.INFO`, `vim.log.levels.WARN`, `vim.log.levels.ERROR`).
---- @param opts table|nil: A table of additional options for the notification. If not
---- provided, default options are used. The `title` field is always set to `"docgen.lua"`.
+--- @param message string The content of the notification.
+--- @param log_level integer The severity level of the notification (e.g., `vim.log.levels.INFO`, `vim.log.levels.WARN`, `vim.log.levels.ERROR`).
+--- @param opts table|nil Additional options for the notification. If not provided, default options are used.
 ---
 --- @return nil
 function M.docgen_notify(message, log_level, opts)
@@ -84,21 +85,35 @@ function M.docgen_notify(message, log_level, opts)
     return vim.notify(message, log_level, opts)
 end
 
+--- Highlights the function signature for a given Tree-sitter node.
+---
+--- This function highlights the portion of the buffer corresponding to the start of a function.
+--- Useful for visually indicating which function is being documented.
+---
+--- @param function_node TSNode The Tree-sitter node representing the function whose signature to highlight.
+---
+--- @return nil
 function M.highlight_signature(function_node)
     local start_row = function_node:range()
     vim.api.nvim_buf_add_highlight(0, ns_id, "DocgenProcessing", start_row, 0, -1)
 end
 
---- Clears all highlights related to the docgen process from the current buffer.
---- Should be called after doc generation is completed or cancelled.
+--- Clears all highlights added by the docgen process in the current buffer.
+---
+--- This should be called after the documentation generation is completed or canceled.
+---
+--- @return nil
 function M.clear_highlight()
     vim.api.nvim_buf_clear_namespace(0, ns_id, 0, -1)
 end
 
---- Moves the cursor to the start of a given function node.
---- Useful for large functions where the user might be far from the signature.
+--- Moves the cursor to the start of the function represented by a Tree-sitter node.
 ---
---- @param node TSNode: The Tree-sitter node whose start position should be focused.
+--- This is particularly useful for large functions where the user may be far from the function signature.
+---
+--- @param node TSNode The Tree-sitter node representing the function.
+---
+--- @return nil
 function M.jump_to_node_start(node)
     local start_row, start_col = node:range()
     vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })

@@ -2,10 +2,10 @@ local M = {}
 
 local config = {
     ui = {
-        highlight_color = "#545454",
+        highlight_color = "#545454", -- Default function highlight color used in the UI
     },
-    runner = "ollama",
-    model = "llama3.2",
+    runner = "ollama",         -- Default runner for executing model tasks
+    model = "llama3.2",        -- Default model to use for documentation generation
     prompt_template = [[
         You are a documentation assistant.
 
@@ -29,14 +29,25 @@ local config = {
 }
 
 --- Sets up the plugin configuration by merging user-provided values with defaults.
---- @param user_config table: A table containing user-defined configuration options.
+---
+--- This function allows users to customize the plugin's behavior by passing in their own configuration.
+--- The provided configuration is merged with the default settings, with user settings taking precedence.
+---
+--- @param user_config table A table containing user-defined configuration options. If not provided, the default config will be used.
+---
+--- @return nil
 function M.setup(user_config)
     config = vim.tbl_deep_extend("force", config, user_config)
 end
 
 --- Retrieves a value from the plugin configuration.
---- @param key string: The key corresponding to the configuration value to retrieve.
---- @return any: The value associated with the given key, or nil if it doesn't exist.
+---
+--- This function allows you to access specific configuration values that have been set in the plugin.
+--- If the provided key does not exist in the configuration, `nil` will be returned.
+---
+--- @param key string The key corresponding to the configuration value to retrieve.
+---
+--- @return any config_value The value associated with the given key, or nil if it doesn't exist.
 function M.get_config(key)
     return config[key]
 end
