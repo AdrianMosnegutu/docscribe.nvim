@@ -8,8 +8,15 @@
 
 ---
 
+## 🚧 Work in Progress – Not Recommended for Production 🚧
+
+`docscribe.nvim` is a cutting-edge Neovim plugin designed to seamlessly generate inline documentation for your code using the power of Language Models (LLMs). Whether you're a seasoned developer or just getting started, docscribe.nvim aims to make documenting your code easier and more efficient.
+
+⚠️ **Important Notice**: This plugin is currently under active development and is not yet stable for production use. Expect bugs, unfinished features, and rapid iterations. Feel free to explore and contribute!
+
+---
+
 ## Table of Contents
-- [🚧 Work in Progress – Not Recommended for Production 🚧](#-work-in-progress--not-recommended-for-production-)
 - [🎥 Demo](#-demo)
 - [✨ Features at a Glance](#-features-at-a-glance)
   - [Currently Available 🟢](#currently-available-)
@@ -24,14 +31,6 @@
 - [📋 Current Status](#-current-status)
 - [🤝 Contributing](#-contributing)
 - [⭐️ Support](#️-support)
-
----
-
-## 🚧 Work in Progress – Not Recommended for Production 🚧
-
-`docscribe.nvim` is a cutting-edge Neovim plugin designed to seamlessly generate inline documentation for your code using the power of Language Models (LLMs). Whether you're a seasoned developer or just getting started, docscribe.nvim aims to make documenting your code easier and more efficient.
-
-⚠️ **Important Notice**: This plugin is currently under active development and is not yet stable for production use. Expect bugs, unfinished features, and rapid iterations. Feel free to explore and contribute!
 
 ---
 
