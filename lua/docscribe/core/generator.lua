@@ -9,6 +9,7 @@ local M = {}
 -- Internal flag to prevent concurrent doc generation
 local is_generating = false
 
+-- Internal flag to prevent highlights from being removed prematurely
 local docs_are_highlighted = false
 
 local function handle_successful_doc_generation(insertion_row, docs)
@@ -25,9 +26,9 @@ local function handle_successful_doc_generation(insertion_row, docs)
 	ui.highlight_node(docs_node)
 	docs_are_highlighted = true
 
-    --- @diagnostic disable-next-line: undefined-field
+	--- @diagnostic disable-next-line: undefined-field
 	local timer = vim.loop.new_timer()
-	timer:start(2000, 0, function()
+	timer:start(config.get_config("ui").highlight.timeout, 0, function()
 		vim.schedule(function()
 			if docs_are_highlighted then
 				ui.clear_highlight()
@@ -65,12 +66,12 @@ end
 --- @param insertion_row integer The row above which the documentation should be inserted.
 function M.generate_docs(function_node, function_text, insertion_row)
 	is_generating = true
-    docs_are_highlighted = false
+	docs_are_highlighted = false
 
-	local highlight_mode = config.get_config("ui").highlight
-	if highlight_mode == "full" then
+	local highlight_style = config.get_config("ui").highlight.style
+	if highlight_style == "full" then
 		ui.highlight_node(function_node)
-	elseif highlight_mode == "signature" then
+	elseif highlight_style == "signature" then
 		ui.highlight_signature(function_node)
 	end
 
