@@ -8,7 +8,7 @@ function M.setup(user_config)
 
     vim.api.nvim_create_user_command("DocscribeGenerate", commands.generate_docs_for_function_under_cursor, {})
 
-    local highlight_color = config.get_config("ui").highlight_color
+    local highlight_color = config.get_config("ui").highlight.bg
     if highlight_color then
         vim.cmd("highlight DocscribeProcessing guibg=" .. highlight_color)
     end

@@ -14,16 +14,14 @@ local M = {}
 --- @param callback fun(docs: string | nil) A callback that receives the generated docs as a string,
 --- or nil if generation failed.
 function M.generate_docs(function_code, callback)
-	local prompt_template = config.get_config("prompt_template")
+	local prompt_template = config.get_config("prompts").default_prompt_template
 	local prompt = prompt_template:gsub("{{code}}", function_code)
 
-	local runner = config.get_config("runner")
-	local model = config.get_config("model")
-
-	if runner == "ollama" then
-		M.generate_using_ollama(prompt, model, callback)
+	local llm = config.get_config("llm")
+	if llm.provider == "ollama" then
+		M.generate_using_ollama(prompt, llm.model, callback)
 	else
-		ui.docscribe_notify("Invalid LLM runner: " .. runner, vim.log.levels.ERROR)
+		ui.docscribe_notify("Invalid LLM runner: " .. llm.provider, vim.log.levels.ERROR)
 	end
 end
 

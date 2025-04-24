@@ -17,6 +17,7 @@
 ---
 
 ## Table of Contents
+
 - [🎥 Demo](#-demo)
 - [✨ Features at a Glance](#-features-at-a-glance)
   - [Currently Available 🟢](#currently-available-)
@@ -109,31 +110,40 @@ call dein#add('AdrianMosnegutu/docscribe.nvim')
 ````lua
 {
     ui = {
-        highlight = "signature", -- What part of the function to highlight: "full", "signature", "none"
-        highlight_color = "#545454", -- Default function highlight color used in the UI
+        highlight = {
+            style = "signature",        -- "signature" | "full" | "none" function highlight
+            timeout = 2000,             -- Time (ms) before highlight fades
+            bg = "#545454",             -- Highlight background color
+        },
     },
-    runner = "ollama",         -- Default runner for executing model tasks
-    model = "llama3.2",        -- Default model to use for documentation generation
-    prompt_template = [[
-        You are a documentation assistant.
+    llm = {
+        provider = "ollama",            -- Backend used for LLM (e.g., ollama, openai)
+        model = "llama3.2",             -- Default model used for docs
+    },
+    -- All prompt templates must include `{{code}}` as the function code placeholder!
+    prompts = {
+        -- Default prompt used to generate TSDoc comments.
+        default_prompt_template = [[
+            You are a documentation assistant.
 
-        Generate a **TypeScript TSDoc** comment block for the function below. The output must:
+            Generate a **TypeScript TSDoc** comment block for the function below. The output must:
 
-        1. Start with `/**` and end with `*/` (pure TSDoc format).
-        2. Include a **clear and concise function description**.
-        3. Document **each parameter** with `@param`, describing the name, type, and purpose.
-        4. Include a `@returns` tag with a description of the return value.
-        5. If the function throws any exceptions, include a `@throws` tag for each.
-        6. Include a `@example` block showing one or two typical usages.
+            1. Start with `/**` and end with `*/` (pure TSDoc format).
+            2. Include a **clear and concise function description**.
+            3. Document **each parameter** with `@param`, describing the name, type, and purpose.
+            4. Include a `@returns` tag with a description of the return value.
+            5. If the function throws any exceptions, include a `@throws` tag for each.
+            6. Include a `@example` block showing one or two typical usages.
 
-        **Do NOT wrap the output in backticks, triple backticks, or any Markdown formatting.**
-        Do **not** include the function code in your output.
-        Just return the unwrapped TSDoc block as plain text.
+            **Do NOT wrap the output in backticks, triple backticks, or any Markdown formatting.**
+            Do **not** include the function code in your output.
+            Just return the unwrapped TSDoc block as plain text.
 
-        ```typescript
-        {{code}}
-        ```
-    ]],
+            ```typescript
+            {{code}}
+            ```
+        ]],
+    },
 }
 ````
 
