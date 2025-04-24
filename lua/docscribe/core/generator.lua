@@ -2,28 +2,38 @@ local ui = require("docscribe.ui")
 local config = require("docscribe.config")
 local llm = require("docscribe.llm")
 local doc_utils = require("docscribe.core.doc")
+local node_utils = require("docscribe.core.node")
 
 local M = {}
 
 -- Internal flag to prevent concurrent doc generation
 local is_generating = false
 
-local function handle_successful_doc_generation(function_node, insertion_row, docs)
+local docs_are_highlighted = false
+
+local function handle_successful_doc_generation(insertion_row, docs)
 	doc_utils.insert_docs_at_row(insertion_row, docs)
+
 	ui.stop_spinner_notification("Successfully generated docs")
 	ui.clear_highlight()
 
-	local docs_node = doc_utils.associated_docs_node(function_node)
-
+	local docs_node = node_utils.get_node_at_position(insertion_row, 0)
 	if not docs_node then
 		return
 	end
 
 	ui.highlight_node(docs_node)
+	docs_are_highlighted = true
 
+    --- @diagnostic disable-next-line: undefined-field
 	local timer = vim.loop.new_timer()
 	timer:start(2000, 0, function()
-		vim.schedule(ui.clear_highlight)
+		vim.schedule(function()
+			if docs_are_highlighted then
+				ui.clear_highlight()
+			end
+			docs_are_highlighted = false
+		end)
 	end)
 end
 
@@ -55,6 +65,7 @@ end
 --- @param insertion_row integer The row above which the documentation should be inserted.
 function M.generate_docs(function_node, function_text, insertion_row)
 	is_generating = true
+    docs_are_highlighted = false
 
 	local highlight_mode = config.get_config("ui").highlight
 	if highlight_mode == "full" then
@@ -76,7 +87,7 @@ function M.generate_docs(function_node, function_text, insertion_row)
 		end
 
 		vim.schedule(function()
-			handle_successful_doc_generation(function_node, insertion_row, docs)
+			handle_successful_doc_generation(insertion_row, docs)
 		end)
 	end)
 end
