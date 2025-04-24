@@ -8,6 +8,25 @@ local M = {}
 -- Internal flag to prevent concurrent doc generation
 local is_generating = false
 
+local function handle_successful_doc_generation(function_node, insertion_row, docs)
+	doc_utils.insert_docs_at_row(insertion_row, docs)
+	ui.stop_spinner_notification("Successfully generated docs")
+	ui.clear_highlight()
+
+	local docs_node = doc_utils.associated_docs_node(function_node)
+
+	if not docs_node then
+		return
+	end
+
+	ui.highlight_node(docs_node)
+
+	local timer = vim.loop.new_timer()
+	timer:start(2000, 0, function()
+		vim.schedule(ui.clear_highlight)
+	end)
+end
+
 --- Checks if a documentation generation process is currently running.
 ---
 --- Prevents concurrent invocations of documentation generation to avoid conflicts
@@ -57,9 +76,7 @@ function M.generate_docs(function_node, function_text, insertion_row)
 		end
 
 		vim.schedule(function()
-			doc_utils.insert_docs_at_row(insertion_row, docs)
-			ui.stop_spinner_notification("Successfully generated docs")
-			ui.clear_highlight()
+			handle_successful_doc_generation(function_node, insertion_row, docs)
 		end)
 	end)
 end
