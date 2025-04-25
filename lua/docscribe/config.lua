@@ -12,16 +12,16 @@ local M = {}
 local config = {
 	ui = {
 		highlight = {
-			style = "signature", -- "signature" | "full" | "none" function highlight
-			timeout = 2000, -- Time (ms) before highlight fades
-			bg = "#545454", -- Highlight background color
+			style = "signature",        -- "signature" | "full" | "none" function highlight
+			timeout = 2000,             -- Time (ms) before highlight fades
+			bg = "#545454",             -- Highlight background color
 		},
 	},
 	llm = {
-		provider = "ollama", -- Backend used for LLM (e.g., ollama, openai)
-		model = "llama3.2", -- Default model used for docs
+		provider = "ollama",            -- Backend used for LLM (e.g., ollama, openai)
+		model = "llama3.2",             -- Default model used for docs
 	},
-	prompt_templates = { -- Set of prompt templates for each programming language
+	prompt_templates = {                -- Set of prompt templates for each programming language
 		default = default_template,
 		h = c_template,
 		c = c_template,

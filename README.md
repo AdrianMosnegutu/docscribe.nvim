@@ -107,7 +107,7 @@ call dein#add('AdrianMosnegutu/docscribe.nvim')
 
 `docscribe.nvim` provides several configuration options to tailor the plugin to your needs. Below are the default configurations:
 
-````lua
+```lua
 {
     ui = {
         highlight = {
@@ -120,36 +120,28 @@ call dein#add('AdrianMosnegutu/docscribe.nvim')
         provider = "ollama",            -- Backend used for LLM (e.g., ollama, openai)
         model = "llama3.2",             -- Default model used for docs
     },
-    -- All prompt templates must include `{{code}}` as the function code placeholder!
-    prompts = {
-        -- Default prompt used to generate TSDoc comments.
-        default_prompt_template = [[
-            You are a documentation assistant.
-
-            Generate a **TypeScript TSDoc** comment block for the function below. The output must:
-
-            1. Start with `/**` and end with `*/` (pure TSDoc format).
-            2. Include a **clear and concise function description**.
-            3. Document **each parameter** with `@param`, describing the name, type, and purpose.
-            4. Include a `@returns` tag with a description of the return value.
-            5. If the function throws any exceptions, include a `@throws` tag for each.
-            6. Include a `@example` block showing one or two typical usages.
-
-            **Do NOT wrap the output in backticks, triple backticks, or any Markdown formatting.**
-            Do **not** include the function code in your output.
-            Just return the unwrapped TSDoc block as plain text.
-
-            ```typescript
-            {{code}}
-            ```
-        ]],
+    prompt_templates = {                -- Set of prompt templates for each programming language
+        default = default_template,
+        h = c_template,
+        c = c_template,
+        hpp = cpp_template,
+        cpp = cpp_template,
+        python = python_template,
+        java = java_template,
+        lua = lua_template,
+        javascript = javascript_template,
+        javascriptreact = javascript_template,
+        typescript = typescript_template,
+        typescriptreact = typescript_template,
     },
 }
-````
+```
 
 ⚠️ **Warning**: The `prompt_template` must include a `{{code}}` placeholder. This placeholder will be replaced by the actual function code during documentation generation. Without it, the plugin will not know where to place the code, leading to unexpected behavior.
 
 You can override any of these configurations in your Neovim setup file to customize the plugin's behavior.
+
+Prompt templates can be found in the [prompt_templates/](./lua/docscribe/prompt_templates) directory.
 
 ---
 
