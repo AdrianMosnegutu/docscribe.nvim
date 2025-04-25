@@ -4,6 +4,8 @@ local cpp_template = require("docscribe.prompt_templates.cpp")
 local python_template = require("docscribe.prompt_templates.python")
 local java_template = require("docscribe.prompt_templates.java")
 local lua_template = require("docscribe.prompt_templates.lua")
+local javascript_template = require("docscribe.prompt_templates.javascript")
+local typescript_template = require("docscribe.prompt_templates.typescript")
 
 local M = {}
 
@@ -19,7 +21,7 @@ local config = {
 		provider = "ollama", -- Backend used for LLM (e.g., ollama, openai)
 		model = "llama3.2", -- Default model used for docs
 	},
-	prompt_templates = {
+	prompt_templates = { -- Set of prompt templates for each programming language
 		default = default_template,
 		h = c_template,
 		c = c_template,
@@ -28,6 +30,10 @@ local config = {
 		python = python_template,
 		java = java_template,
 		lua = lua_template,
+		javascript = javascript_template,
+		javascriptreact = javascript_template,
+		typescript = typescript_template,
+		typescriptreact = typescript_template,
 	},
 }
 
