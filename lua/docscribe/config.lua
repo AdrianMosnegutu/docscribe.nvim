@@ -1,6 +1,7 @@
 local default_template = require("docscribe.prompt_templates.default")
 local c_template = require("docscribe.prompt_templates.c")
 local cpp_template = require("docscribe.prompt_templates.cpp")
+local python_template = require("docscribe.prompt_templates.python")
 
 local M = {}
 
@@ -22,6 +23,7 @@ local config = {
 		c = c_template,
 		hpp = cpp_template,
 		cpp = cpp_template,
+		python = python_template,
 	},
 }
 

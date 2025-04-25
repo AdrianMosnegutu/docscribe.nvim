@@ -47,6 +47,11 @@ function M.generate_docs_for_function_under_cursor()
 	local docs_node = doc_utils.associated_docs_node(function_node)
 	local insertion_row = docs_node and docs_node:range() or function_node:range()
 
+	local lang = vim.bo.filetype
+	if lang == "python" then
+		insertion_row = insertion_row + 1
+	end
+
 	generator_utils.generate_docs(function_node, function_text, insertion_row)
 	if docs_node then
 		node_utils.delete_node(docs_node)
