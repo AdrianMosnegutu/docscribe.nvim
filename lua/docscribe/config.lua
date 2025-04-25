@@ -3,6 +3,7 @@ local c_template = require("docscribe.prompt_templates.c")
 local cpp_template = require("docscribe.prompt_templates.cpp")
 local python_template = require("docscribe.prompt_templates.python")
 local java_template = require("docscribe.prompt_templates.java")
+local lua_template = require("docscribe.prompt_templates.lua")
 
 local M = {}
 
@@ -26,6 +27,7 @@ local config = {
 		cpp = cpp_template,
 		python = python_template,
 		java = java_template,
+		lua = lua_template,
 	},
 }
 
