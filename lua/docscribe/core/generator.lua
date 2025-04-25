@@ -13,29 +13,29 @@ local is_generating = false
 local docs_are_highlighted = false
 
 local function handle_successful_doc_generation(insertion_row, docs)
-	doc_utils.insert_docs_at_row(insertion_row, docs)
+    doc_utils.insert_docs_at_row(insertion_row, docs)
 
-	ui.stop_spinner_notification("Successfully generated docs")
-	ui.clear_highlight()
+    ui.stop_spinner_notification("Successfully generated docs")
+    ui.clear_highlight()
 
-	local docs_node = node_utils.get_node_at_position(insertion_row, 0)
-	if not docs_node then
-		return
-	end
+    local docs_node = node_utils.get_node_at_position(insertion_row, 0)
+    if not docs_node then
+        return
+    end
 
-	ui.highlight_node(docs_node)
-	docs_are_highlighted = true
+    ui.highlight_node(docs_node)
+    docs_are_highlighted = true
 
-	--- @diagnostic disable-next-line: undefined-field
-	local timer = vim.loop.new_timer()
-	timer:start(config.get_config("ui").highlight.timeout, 0, function()
-		vim.schedule(function()
-			if docs_are_highlighted then
-				ui.clear_highlight()
-			end
-			docs_are_highlighted = false
-		end)
-	end)
+    --- @diagnostic disable-next-line: undefined-field
+    local timer = vim.loop.new_timer()
+    timer:start(config.get_config("ui").highlight.timeout, 0, function()
+        vim.schedule(function()
+            if docs_are_highlighted then
+                ui.clear_highlight()
+            end
+            docs_are_highlighted = false
+        end)
+    end)
 end
 
 --- Checks if a documentation generation process is currently running.
@@ -45,7 +45,7 @@ end
 ---
 --- @return boolean is_generating Whether a generation process is currently active.
 function M.is_generating()
-	return is_generating
+    return is_generating
 end
 
 --- Triggers documentation generation for a given function node.
@@ -65,32 +65,34 @@ end
 --- @param function_text string The raw source text of the function.
 --- @param insertion_row integer The row above which the documentation should be inserted.
 function M.generate_docs(function_node, function_text, insertion_row)
-	is_generating = true
-	docs_are_highlighted = false
+    is_generating = true
 
-	local highlight_style = config.get_config("ui").highlight.style
-	if highlight_style == "full" then
-		ui.highlight_node(function_node)
-	elseif highlight_style == "signature" then
-		ui.highlight_signature(function_node)
-	end
+    ui.clear_highlight()
+    docs_are_highlighted = false
 
-	ui.start_spinner_notification()
-	ui.jump_to_node_start(function_node)
+    local highlight_style = config.get_config("ui").highlight.style
+    if highlight_style == "full" then
+        ui.highlight_node(function_node)
+    elseif highlight_style == "signature" then
+        ui.highlight_signature(function_node)
+    end
 
-	llm.generate_docs(function_text, function(docs)
-		is_generating = false
+    ui.start_spinner_notification()
+    ui.jump_to_node_start(function_node)
 
-		if not docs then
-			ui.stop_spinner_notification("Could not generate docs", true)
-			vim.schedule(ui.clear_highlight)
-			return
-		end
+    llm.generate_docs(function_text, function(docs)
+        is_generating = false
 
-		vim.schedule(function()
-			handle_successful_doc_generation(insertion_row, docs)
-		end)
-	end)
+        if not docs then
+            ui.stop_spinner_notification("Could not generate docs", true)
+            vim.schedule(ui.clear_highlight)
+            return
+        end
+
+        vim.schedule(function()
+            handle_successful_doc_generation(insertion_row, docs)
+        end)
+    end)
 end
 
 return M
