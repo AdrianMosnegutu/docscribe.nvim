@@ -1,40 +1,27 @@
+local default_template = require("docscribe.prompt_templates.default")
+local c_template = require("docscribe.prompt_templates.c")
+local cpp_template = require("docscribe.prompt_templates.cpp")
+
 local M = {}
 
 local config = {
 	ui = {
 		highlight = {
-			style = "signature",        -- "signature" | "full" | "none" function highlight
-			timeout = 2000,             -- Time (ms) before highlight fades
-			bg = "#545454",           -- Highlight background color
+			style = "signature", -- "signature" | "full" | "none" function highlight
+			timeout = 2000, -- Time (ms) before highlight fades
+			bg = "#545454", -- Highlight background color
 		},
 	},
 	llm = {
-		provider = "ollama",            -- Backend used for LLM (e.g., ollama, openai)
-		model = "llama3.2",             -- Default model used for docs
+		provider = "ollama", -- Backend used for LLM (e.g., ollama, openai)
+		model = "llama3.2", -- Default model used for docs
 	},
-	-- All prompt templates must include `{{code}}` as the function code placeholder!
-	prompts = {
-		-- Default prompt used to generate TSDoc comments.
-		default_prompt_template = [[
-            You are a documentation assistant.
-
-            Generate a **TypeScript TSDoc** comment block for the function below. The output must:
-
-            1. Start with `/**` and end with `*/` (pure TSDoc format).
-            2. Include a **clear and concise function description**.
-            3. Document **each parameter** with `@param`, describing the name, type, and purpose.
-            4. Include a `@returns` tag with a description of the return value.
-            5. If the function throws any exceptions, include a `@throws` tag for each.
-            6. Include a `@example` block showing one or two typical usages.
-
-            **Do NOT wrap the output in backticks, triple backticks, or any Markdown formatting.**
-            Do **not** include the function code in your output.
-            Just return the unwrapped TSDoc block as plain text.
-
-            ```typescript
-            {{code}}
-            ```
-        ]],
+	prompt_templates = {
+		default = default_template,
+		h = c_template,
+		c = c_template,
+		hpp = cpp_template,
+		cpp = cpp_template,
 	},
 }
 

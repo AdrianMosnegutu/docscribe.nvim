@@ -14,7 +14,11 @@ local M = {}
 --- @param callback fun(docs: string | nil) A callback that receives the generated docs as a string,
 --- or nil if generation failed.
 function M.generate_docs(function_code, callback)
-	local prompt_template = config.get_config("prompts").default_prompt_template
+	local lang = vim.bo.filetype
+
+	local prompt_templates = config.get_config("prompt_templates")
+	local prompt_template = prompt_templates[lang] or prompt_templates.default
+
 	local prompt = prompt_template:gsub("{{code}}", function_code)
 
 	local llm = config.get_config("llm")
