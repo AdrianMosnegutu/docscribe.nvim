@@ -8,6 +8,7 @@ local function_node_types = {
 	"function_definition",
 	"function_expression",
 	"method_definition",
+	"method_declaration",
 	"arrow_function",
 }
 
@@ -18,6 +19,7 @@ local function_node_types = {
 --- - "function_definition"
 --- - "function_expression"
 --- - "method_definition"
+--- - "method_declaration"
 --- - "arrow_function"
 ---
 --- @return TSNode|nil node The nearest function node, or nil if not found.
