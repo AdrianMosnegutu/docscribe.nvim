@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        neovim: [ 'stable', 'nightly' ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Neovim
+        uses: MunifTanjim/setup-neovim-action@v1
+        with:
+          tag: ${{ matrix.neovim }}    # e.g. 'stable' or 'nightly'
+      - name: Run Tests
+        run: |
+          # Run Neovim in headless mode with a minimal init file to load the plugin
+          nvim --headless -u tests/minimal_init.lua \
+            -c "PlenaryBustedDirectory tests/ {minimal_init = 'tests/minimal_init.lua'}" \
+            -c "qa"
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Luacheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y luarocks
+          sudo luarocks install luacheck
+      - name: Run Luacheck
+        run: |
+          luacheck .            # Lint all Lua files in the repo
