@@ -54,7 +54,7 @@ function M.generate_docs_for_function_under_cursor()
 
 	generator_utils.generate_docs(function_node, function_text, insertion_row)
 	if docs_node then
-		node_utils.delete_node(docs_node)
+		node_utils.delete_node_rows(docs_node)
 	end
 end
 
