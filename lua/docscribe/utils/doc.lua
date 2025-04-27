@@ -1,7 +1,7 @@
---- @module "docscribe.core.doc"
+--- @module "docscribe.utils.doc"
 --- A module for handling documentation insertion and retrieval for function nodes.
 
-local node_utils = require("docscribe.core.node")
+local node_utils = require("docscribe.utils.node")
 
 local M = {}
 
@@ -11,6 +11,7 @@ local M = {}
 ---
 --- @return TSNode|nil documentation_node The comment node associated with the function, or nil if no comment is found above.
 function M.get_associated_docs_node(function_node)
+    -- Check that the provided node exists
 	if not function_node then
 		return nil
 	end

@@ -1,7 +1,7 @@
 require("plenary.busted")
 
 describe("docscribe.core.node", function()
-	local node_utils = require("docscribe.core.node")
+	local node_utils = require("docscribe.utils.node")
 	local bufnr
 
 	before_each(function()
@@ -82,7 +82,7 @@ describe("docscribe.core.node", function()
 
 			assert.is_nil(node_text)
 			assert.is_not_nil(err)
-			assert.is_equal(err, "Could not extract node text, node is nil")
+			assert.is_equal(err, "Could not extract node text: node is nil")
 		end)
 
 		it("returns the node's text", function()
@@ -104,7 +104,7 @@ describe("docscribe.core.node", function()
 
 			assert.is_nil(node)
 			assert.is_not_nil(err)
-			assert.is_equal(err, "Treesitter could not build parser")
+			assert.is_equal(err, "Could not get node at position: parser is invalid")
 		end)
 
 		it("returns the node at a specified position", function()
@@ -135,7 +135,7 @@ describe("docscribe.core.node", function()
 			local err = node_utils.delete_node_rows(nil)
 
 			assert.is_not_nil(err)
-			assert.is_equal(err, "Could not delete node, node was nil")
+			assert.is_equal(err, "Could not delete node: node is nil")
 		end)
 
 		it("deletes a given node from the buffer", function()
@@ -147,6 +147,27 @@ describe("docscribe.core.node", function()
 
 			assert.is_nil(err)
 			assert.is_equal(buffer_text, "int main() {\n    return 0;\n}")
+		end)
+	end)
+
+	describe("jump_to_node_start", function()
+		it("returns an error message if no node is provided", function()
+			local err = node_utils.jump_to_node_start()
+
+			assert.is_not_nil(err)
+			assert.is_equal(err, "Could not jump to node start: node is nil")
+		end)
+
+		it("jumps to the start of the node", function()
+			local node = node_utils.get_node_at_position(2, 2)
+			local start_row, start_col = node:range()
+
+			local err = node_utils.jump_to_node_start(node)
+			assert.is_nil(err)
+
+			local cursor_row, cursor_col = unpack(vim.api.nvim_win_get_cursor(0))
+			assert.is_equal(start_row, cursor_row - 1)
+			assert.is_equal(start_col, cursor_col)
 		end)
 	end)
 end)
