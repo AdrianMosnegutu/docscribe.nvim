@@ -13,10 +13,13 @@ local is_generating = false
 local docs_are_highlighted = false
 
 local function handle_successful_doc_generation(insertion_row, docs)
-	doc_utils.insert_docs_at_row(insertion_row, docs)
-
 	ui.stop_spinner_notification("Successfully generated docs")
 	ui.clear_highlight()
+
+	local err = doc_utils.insert_docs(insertion_row, 0, docs)
+	if err then
+		ui.docscribe_notify(err, vim.log.levels.ERROR)
+	end
 
 	local docs_node = node_utils.get_node_at_position(insertion_row, 0)
 	if not docs_node then

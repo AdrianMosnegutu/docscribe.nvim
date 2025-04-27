@@ -49,7 +49,7 @@ end
 --- @return string|nil error_msg An error message if the node is nil.
 function M.get_node_text(node)
 	if not node then
-		return nil, "Could not extract node text, node was nil"
+		return nil, "Could not extract node text, node is nil"
 	end
 
 	-- Get the node text based on the node's range within the current buffer

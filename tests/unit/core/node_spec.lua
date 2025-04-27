@@ -82,7 +82,7 @@ describe("docscribe.core.node", function()
 
 			assert.is_nil(node_text)
 			assert.is_not_nil(err)
-			assert.is_equal(err, "Could not extract node text, node was nil")
+			assert.is_equal(err, "Could not extract node text, node is nil")
 		end)
 
 		it("returns the node's text", function()

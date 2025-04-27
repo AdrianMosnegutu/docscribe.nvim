@@ -1,23 +1,27 @@
+--- @module "docscribe.core.doc"
+--- A module for handling documentation insertion and retrieval for function nodes.
+
 local node_utils = require("docscribe.core.node")
-local ui = require("docscribe.ui")
 
 local M = {}
 
---- Attempts to find a documentation comment directly above a function node.
+--- Retrieves the associated documentation node for the given function node.
 ---
---- This function checks the line immediately above the start of the given function node.
---- If a comment node is present, it is assumed to be the associated documentation.
+--- @param function_node TSNode|nil The function node to search for associated documentation above.
 ---
---- This is a lightweight, fast way to identify pre-existing documentation for potential replacement.
----
---- @param function_node TSNode The Tree-sitter function node to inspect.
---- @return TSNode|nil comment_node The comment node if found, or nil.
-function M.associated_docs_node(function_node)
+--- @return TSNode|nil documentation_node The comment node associated with the function, or nil if no comment is found above.
+function M.get_associated_docs_node(function_node)
+	if not function_node then
+		return nil
+	end
+
+	-- Check if the function declaration is on the first line of the buffer
 	local start_row = function_node:range()
 	if start_row == 0 then
 		return nil
 	end
 
+	-- Check if the node directly above the function node is a comment
 	local above_node = node_utils.get_node_at_position(start_row - 1, 0)
 	if not above_node or above_node:type() ~= "comment" then
 		return nil
@@ -26,22 +30,40 @@ function M.associated_docs_node(function_node)
 	return above_node
 end
 
---- Inserts a block of documentation text at a specific row in the current buffer.
+--- Inserts documentation at the specified row with the given indentation level.
 ---
---- Used to place generated doc comments just above the function node. Performs basic
---- validation to ensure empty or nil strings are not inserted.
----
---- @param row integer The buffer row at which to insert the docs.
+--- @param row integer The row at which the documentation should be inserted.
+--- @param indentation_level integer The number of spaces to use for indentation.
 --- @param docs string The documentation string to insert.
-function M.insert_docs_at_row(row, docs)
-	if not docs or docs == "" then
-		ui.docscribe_notify("Could not insert docs: invalid function", vim.log.levels.ERROR)
-		return
+---
+--- @return string|nil error_msg An error message if the insertion fails, or nil if successful.
+function M.insert_docs(row, indentation_level, docs)
+	-- Check that the docs exist
+	if #docs == 0 then
+		return "Could not insert docs: no docs provided"
 	end
 
-	docs = docs:gsub("\n+$", "")
+	-- Check that the indentation level is valid
+	if indentation_level < 0 then
+		return "Could not insert docs: indentation level is negative"
+	end
+
+	-- Check that the row is valid
 	local bufnr = vim.api.nvim_get_current_buf()
+	local line_count = vim.api.nvim_buf_line_count(bufnr)
+	if row < 0 or row >= line_count + 1 then
+		return "Could not insert docs: invalid row"
+	end
+
+	-- Trim the ends and split the docs into a list of its lines
+	docs = docs:gsub("\n+$", "")
 	local lines = vim.split(docs, "\n", { plain = true })
+
+	-- Add indentation to each line
+	local indentation = string.rep(" ", indentation_level)
+	for i, line in ipairs(lines) do
+		lines[i] = indentation .. line
+	end
 
 	vim.api.nvim_buf_set_lines(bufnr, row, row, false, lines)
 end

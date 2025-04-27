@@ -44,7 +44,7 @@ function M.generate_docs_for_function_under_cursor()
 		return
 	end
 
-	local docs_node = doc_utils.associated_docs_node(function_node)
+	local docs_node = doc_utils.get_associated_docs_node(function_node)
 	local insertion_row = docs_node and docs_node:range() or function_node:range()
 
 	local lang = vim.bo.filetype
