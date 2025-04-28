@@ -1,3 +1,5 @@
+--- @diagnostic disable: need-check-nil, param-type-mismatch
+
 require("plenary.busted")
 
 local M = require("docscribe.utils.node")

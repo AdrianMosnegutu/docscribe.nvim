@@ -2,10 +2,11 @@
 
 require("plenary.busted")
 
-describe("docscribe.core.doc", function()
-    local doc_utils = require("docscribe.utils.doc")
-    local node_utils = require("docscribe.utils.node")
+local node_utils = require("docscribe.utils.node")
 
+local M = require("docscribe.utils.doc")
+
+describe("docscribe.core.doc", function()
     local bufnr
 
     before_each(function()
@@ -28,7 +29,7 @@ describe("docscribe.core.doc", function()
             vim.api.nvim_win_set_cursor(0, { 1, 0 })
 
             local node = node_utils.get_function_node()
-            local docs_node = doc_utils.get_associated_docs_node(node)
+            local docs_node = M.get_associated_docs_node(node)
 
             assert.is_nil(docs_node)
         end)
@@ -46,7 +47,7 @@ describe("docscribe.core.doc", function()
             vim.api.nvim_win_set_cursor(0, { 5, 0 })
 
             local node = node_utils.get_function_node()
-            local docs_node = doc_utils.get_associated_docs_node(node)
+            local docs_node = M.get_associated_docs_node(node)
 
             assert.is_nil(docs_node)
         end)
@@ -63,7 +64,7 @@ describe("docscribe.core.doc", function()
             vim.api.nvim_win_set_cursor(0, { 5, 0 })
 
             local node = node_utils.get_function_node()
-            local docs_node = doc_utils.get_associated_docs_node(node)
+            local docs_node = M.get_associated_docs_node(node)
 
             assert.is_nil(docs_node)
         end)
@@ -80,7 +81,7 @@ describe("docscribe.core.doc", function()
             vim.api.nvim_win_set_cursor(0, { 5, 0 })
 
             local node = node_utils.get_function_node()
-            local docs_node = doc_utils.get_associated_docs_node(node)
+            local docs_node = M.get_associated_docs_node(node)
             local docs = node_utils.get_node_text(docs_node)
 
             assert.is_not_nil(docs_node)
@@ -100,7 +101,7 @@ describe("docscribe.core.doc", function()
             })
 
             local node = node_utils.get_node_at_position(4, 4)
-            local docs_node = doc_utils.get_associated_docs_node(node)
+            local docs_node = M.get_associated_docs_node(node)
             local docs = node_utils.get_node_text(docs_node)
 
             assert.is_not_nil(docs_node)
@@ -124,7 +125,7 @@ describe("docscribe.core.doc", function()
             })
 
             local node = node_utils.get_node_at_position(2, 4)
-            local docs_node = doc_utils.get_associated_docs_node(node)
+            local docs_node = M.get_associated_docs_node(node)
             local docs = node_utils.get_node_text(docs_node)
 
             assert.is_not_nil(docs_node)
@@ -153,19 +154,19 @@ describe("docscribe.core.doc", function()
         end)
 
         it("returns an error message if docs are an empty string", function()
-            local err = doc_utils.insert_docs(0, 0, "")
+            local err = M.insert_docs(0, 0, "")
 
             assert.is_not_nil(err)
             assert.is_equal(err, "Could not insert docs: no docs provided")
         end)
 
         it("returns an error message if the row is out of bounds", function()
-            local err = doc_utils.insert_docs(-1, 0, "Test")
+            local err = M.insert_docs(-1, 0, "Test")
 
             assert.is_not_nil(err)
             assert.is_equal(err, "Could not insert docs: invalid row")
 
-            err = doc_utils.insert_docs(8, 0, "Test")
+            err = M.insert_docs(8, 0, "Test")
 
             assert.is_not_nil(err)
             assert.is_equal(err, "Could not insert docs: invalid row")
@@ -173,7 +174,7 @@ describe("docscribe.core.doc", function()
 
         it("inserts docs at the specified row", function()
             local docs = "/**\n * @brief This is the app's entry point\n*/"
-            local err = doc_utils.insert_docs(4, 0, docs)
+            local err = M.insert_docs(4, 0, docs)
 
             local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
             local buffer_text = table.concat(lines, "\n")
@@ -205,7 +206,7 @@ describe("docscribe.core.doc", function()
             vim.api.nvim_win_set_cursor(0, { 3, 0 })
 
             local docs = "/**\n * This is a function\n*/"
-            local err = doc_utils.insert_docs(1, 4, docs)
+            local err = M.insert_docs(1, 4, docs)
 
             local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
             local buffer_text = table.concat(lines, "\n")
