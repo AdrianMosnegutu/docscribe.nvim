@@ -10,16 +10,16 @@ local M = {}
 local is_generating = false
 local docs_are_highlighted = false
 
-local function handle_successful_doc_generation(insertion_row, docs)
+local function handle_successful_doc_generation(docs, insertion_row, indentation_level)
     notification_utils.stop_spinner_notification("Successfully generated docs")
     highlight_utils.clear_highlight()
 
-    local err = doc_utils.insert_docs(insertion_row, 0, docs)
+    local err = doc_utils.insert_docs(insertion_row, indentation_level, docs)
     if err then
         notification_utils.docscribe_notify(err, vim.log.levels.ERROR)
     end
 
-    local docs_node = node_utils.get_node_at_position(insertion_row, 0)
+    local docs_node = node_utils.get_node_at_position(insertion_row, indentation_level)
     if not docs_node then
         return
     end
@@ -43,7 +43,7 @@ function M.is_generating()
     return is_generating
 end
 
-function M.generate_docs(function_text, insertion_row)
+function M.generate_docs(function_text, insertion_row, indentation_level)
     is_generating = true
     docs_are_highlighted = false
 
@@ -59,7 +59,7 @@ function M.generate_docs(function_text, insertion_row)
         end
 
         vim.schedule(function()
-            handle_successful_doc_generation(insertion_row, docs)
+            handle_successful_doc_generation(docs, insertion_row, indentation_level)
         end)
     end)
 end

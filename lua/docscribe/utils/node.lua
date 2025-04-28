@@ -102,4 +102,25 @@ function M.jump_to_node_start(node)
     vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
 end
 
+--- Gets the number of leading spaces (indentation) before the function
+--- definition starts.
+---
+--- This function checks the line where the `function_node` starts,
+--- and counts how many spaces are before the first non-space character up
+--- to the function's column position.
+---
+--- @param function_node TSNode Tree-sitter node representing a function.
+---
+--- @return integer indentation_level of leading spaces (indentation width) before the
+--- function keyword.
+function M.get_function_indentation(function_node)
+    local row, col = function_node:range()
+
+    local line = vim.api.nvim_buf_get_lines(0, row, row + 1, false)[1]
+    local partial_line = line:sub(1, col)
+
+    local spaces = partial_line:match("^(%s*)")
+    return #spaces
+end
+
 return M

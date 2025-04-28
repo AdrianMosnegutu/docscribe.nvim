@@ -16,13 +16,13 @@ local M = {}
 --- the function, or nil if no comment is found above.
 function M.get_associated_docs_node(function_node)
     -- Check if the function declaration is on the first line of the buffer
-    local start_row = function_node:range()
+    local start_row, start_col = function_node:range()
     if start_row == 0 then
         return nil
     end
 
     -- Check if the node directly above the function node is a comment
-    local above_node = node_utils.get_node_at_position(start_row - 1, 0)
+    local above_node = node_utils.get_node_at_position(start_row - 1, start_col)
     if not above_node or above_node:type() ~= "comment" then
         return nil
     end
