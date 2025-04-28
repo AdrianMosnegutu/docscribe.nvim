@@ -58,9 +58,14 @@ end
 --- @param column integer The column number (0-indexed).
 ---
 --- @return TSNode|nil node The Treesitter node at the specified position.
---- @return string|nil error_msg An error message if no node is found
+--- @return string|nil error_msg An error message if the row is out of bounds or no node is found
 function M.get_node_at_position(row, column)
 	local bufnr = vim.api.nvim_get_current_buf()
+	local total_lines = vim.api.nvim_buf_line_count(bufnr)
+
+	if row < 0 or row >= total_lines then
+		return nil, "Could not get node at position: position is out of bounds"
+	end
 
 	local success, parser = pcall(vim.treesitter.get_parser, bufnr)
 	if not success or not parser then

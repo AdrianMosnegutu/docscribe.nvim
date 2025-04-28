@@ -6,15 +6,14 @@ describe("docscribe.core.node", function()
 
 	before_each(function()
 		bufnr = vim.api.nvim_create_buf(false, true)
-		vim.api.nvim_win_set_buf(0, bufnr)
 
+		vim.api.nvim_win_set_buf(0, bufnr)
 		vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {
 			"",
 			"int main() {",
 			"    return 0;",
 			"}",
 		})
-		vim.api.nvim_win_set_cursor(0, { 1, 0 })
 
 		vim.cmd("setfiletype c")
 	end)
@@ -85,6 +84,14 @@ describe("docscribe.core.node", function()
 			assert.is_nil(err)
 			assert.is_equal(text, "int main() {\n    return 0;\n}")
 		end)
+	end)
+
+	it("returns an error if the position is out of bounds", function()
+		local node, err = node_utils.get_node_at_position(10, 0)
+
+		assert.is_nil(node)
+		assert.is_not_nil(err)
+		assert.equals(err, "Could not get node at position: position is out of bounds")
 	end)
 
 	describe("get_node_at_position", function()
