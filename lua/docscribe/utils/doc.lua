@@ -1,28 +1,42 @@
 --- @module "docscribe.utils.doc"
 ---
---- A module for handling documentation insertion and retrieval for function
---- nodes.
+--- This module provides utilities for handling documentation insertion and retrieval
+--- for function nodes in code files. It includes methods for locating associated
+--- documentation nodes and inserting documentation at a specified location in the
+--- code with proper formatting and indentation.
 
 local node_utils = require("docscribe.utils.node")
 
 local M = {}
 
---- Retrieves the associated documentation node for the given function node.
+--- Retrieves the associated documentation node for a given function node.
 ---
---- @param function_node TSNode The function node to search for associated
---- documentation above.
+--- This function checks if there is a comment node directly above the given
+--- function node and returns it as the associated documentation node. If no
+--- comment node is found, it returns `nil`.
 ---
---- @return TSNode|nil documentation_node The comment node associated with
---- the function, or nil if no comment is found above.
+--- **Use Case:**
+--- - This is useful for identifying existing docstrings that need to be updated
+---   or replaced when generating new documentation for a function.
+---
+--- @param function_node TSNode The function node for which to search for an
+--- associated documentation node.
+---
+--- @return TSNode|nil documentation_node The comment node directly above the
+--- function node, or `nil` if no comment is found.
 function M.get_associated_docs_node(function_node)
     -- Check if the function declaration is on the first line of the buffer
-    local start_row, start_col = function_node:range()
-    if start_row == 0 then
+    local row, col = function_node:range()
+    if row == 0 then
         return nil
     end
 
+    -- Adjust the column to be within the bounds of the previous line
+    local line_before = vim.api.nvim_buf_get_lines(0, row - 1, row, false)[1]
+    col = math.min(col, #line_before - 1)
+
     -- Check if the node directly above the function node is a comment
-    local above_node = node_utils.get_node_at_position(start_row - 1, start_col)
+    local above_node = node_utils.get_node_at_position(row - 1, col)
     if not above_node or above_node:type() ~= "comment" then
         return nil
     end
@@ -30,14 +44,30 @@ function M.get_associated_docs_node(function_node)
     return above_node
 end
 
---- Inserts documentation at the specified row with the given indentation level.
+--- Inserts documentation at a specified row with proper indentation.
 ---
---- @param row integer The row at which the documentation should be inserted.
+--- This function inserts a multi-line documentation string (`docs`) at the
+--- specified row in the current buffer, applying the given indentation level
+--- to each line of the documentation.
+---
+--- **Use Case:**
+--- - This is useful for adding docstrings or comments for a function in a
+---   structured and formatted way.
+---
+--- **Error Handling:**
+--- - If the documentation string is empty, an error message is returned.
+--- - If the indentation level is negative, an error message is returned.
+--- - If the row is invalid (e.g., outside the buffer's line range), an error
+---   message is returned.
+---
+--- @param row integer The row index (0-based) where the documentation should
+--- be inserted. Rows start at 0 for the first line.
 --- @param indentation_level integer The number of spaces to use for indentation.
---- @param docs string The documentation string to insert.
+--- Must be non-negative.
+--- @param docs string The documentation string to insert. It can be multi-line.
 ---
---- @return string|nil error_msg An error message if the insertion fails, or nil
---- if successful.
+--- @return string|nil error_msg An error message if the insertion fails, or `nil`
+--- if the insertion is successful.
 function M.insert_docs(row, indentation_level, docs)
     -- Check that the docs exist
     if #docs == 0 then

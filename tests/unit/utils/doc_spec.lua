@@ -137,6 +137,30 @@ describe("docscribe.core.doc", function()
             assert.is_equal(end_row, 1)
             assert.is_equal(end_col, 24)
         end)
+
+        it("returns the associated docs node for a function node not aligned with the docs node", function()
+            vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {
+                "/**",
+                " * This is a docstring",
+                "*/",
+                "export function test() {",
+                "",
+                "}",
+            })
+
+            local node = node_utils.get_node_at_position(3, 7)
+            local docs_node = M.get_associated_docs_node(node)
+            local docs = node_utils.get_node_text(docs_node)
+
+            assert.is_not_nil(docs_node)
+            assert.is_equal(docs, "/**\n * This is a docstring\n*/")
+
+            local start_row, start_col, end_row, end_col = docs_node:range()
+            assert.is_equal(start_row, 0)
+            assert.is_equal(start_col, 0)
+            assert.is_equal(end_row, 2)
+            assert.is_equal(end_col, 2)
+        end)
     end)
 
     describe("insert_docs", function()

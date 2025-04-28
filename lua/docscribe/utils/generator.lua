@@ -27,7 +27,6 @@ local function handle_successful_doc_generation(docs, insertion_row, indentation
     highlight_utils.highlight_node(docs_node)
     docs_are_highlighted = true
 
-    --- @diagnostic disable-next-line: undefined-field
     local timer = vim.loop.new_timer()
     timer:start(config.get_config("ui").highlight.timeout, 0, function()
         vim.schedule(function()
