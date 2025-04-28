@@ -17,11 +17,6 @@ describe("docscribe.core.doc", function()
 	end)
 
 	describe("get_associated_docs_node", function()
-		it("returns nil if no function node is provided", function()
-			local docs_node = doc_utils.get_associated_docs_node()
-			assert.is_nil(docs_node)
-		end)
-
 		it("returns nil if the function declaration is on the first line of the buffer", function()
 			vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {
 				"int main() {",

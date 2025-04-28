@@ -24,18 +24,15 @@ function M.get_function_node()
 	local current_node = ts_utils.get_node_at_cursor()
 	local function_node = nil
 
-	-- Go up the tree while caching the latest function node
 	while current_node do
-		-- Check if the current node is a function node
 		if vim.tbl_contains(function_node_types, current_node:type()) then
 			function_node = current_node
 		end
-
 		current_node = current_node:parent()
 	end
 
 	if not function_node then
-		return nil, "No function selected"
+		return nil, "Cursor is not inside a function block"
 	end
 
 	return function_node
@@ -43,18 +40,12 @@ end
 
 --- Retrieves the text content of a given node.
 ---
---- @param node TSNode|nil The Treesitter node to extract text from.
+--- @param node TSNode The Treesitter node to extract text from.
 ---
---- @return string|nil text The text content of the node.
---- @return string|nil error_msg An error message if the node is nil.
+--- @return string text The text content of the node.
 function M.get_node_text(node)
-	-- Check that the provided node exists
-	if not node then
-		return nil, "Could not extract node text: node is nil"
-	end
-
-	-- Get the node text based on the node's range within the current buffer
 	local bufnr = vim.api.nvim_get_current_buf()
+
 	local start_row, start_col, end_row, end_col = node:range()
 	local lines = vim.api.nvim_buf_get_text(bufnr, start_row, start_col, end_row, end_col, {})
 
@@ -71,13 +62,11 @@ end
 function M.get_node_at_position(row, column)
 	local bufnr = vim.api.nvim_get_current_buf()
 
-	-- Make a protected call to the get_parser function in order to catch any exception
 	local success, parser = pcall(vim.treesitter.get_parser, bufnr)
 	if not success or not parser then
 		return nil, "Could not get node at position: parser is invalid"
 	end
 
-	-- Get the root of the parser's tree and return the descendant located at the given position
 	local tree = parser:parse()[1]
 	local root = tree:root()
 	return root:named_descendant_for_range(row, column, row, column)
@@ -85,31 +74,16 @@ end
 
 --- Deletes the rows of text corresponding to a given node.
 ---
---- @param node TSNode|nil The Treesitter node whose range will be deleted from the buffer.
----
---- @return string|nil error_msg An error message if the node is nil, otherwise nil.
+--- @param node TSNode The Treesitter node whose range will be deleted from the buffer.
 function M.delete_node_rows(node)
-	-- Check that the provided node exists
-	if not node then
-		return "Could not delete node: node is nil"
-	end
-
-	-- Delete the row range of the given node
 	local start_row, _, end_row, _ = node:range()
 	vim.api.nvim_buf_set_lines(0, start_row, end_row + 1, false, {})
 end
 
 --- Jumps the cursor to the start position of a given Tree-sitter node.
 ---
---- @param node TSNode|nil The Tree-sitter node to jump to.
----
---- @return nil|string error_msg An error message if the node is nil, otherwise nil.
+--- @param node TSNode The Tree-sitter node to jump to.
 function M.jump_to_node_start(node)
-	-- Check that the provided node exists
-	if not node then
-		return "Could not jump to node start: node is nil"
-	end
-
 	local start_row, start_col = node:range()
 	vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
 end

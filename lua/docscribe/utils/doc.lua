@@ -7,15 +7,10 @@ local M = {}
 
 --- Retrieves the associated documentation node for the given function node.
 ---
---- @param function_node TSNode|nil The function node to search for associated documentation above.
+--- @param function_node TSNode The function node to search for associated documentation above.
 ---
 --- @return TSNode|nil documentation_node The comment node associated with the function, or nil if no comment is found above.
 function M.get_associated_docs_node(function_node)
-    -- Check that the provided node exists
-	if not function_node then
-		return nil
-	end
-
 	-- Check if the function declaration is on the first line of the buffer
 	local start_row = function_node:range()
 	if start_row == 0 then

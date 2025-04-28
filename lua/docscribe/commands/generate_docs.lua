@@ -26,14 +26,12 @@ function M.generate_docs_command()
 
 	local function_node, function_node_err = node_utils.get_function_node()
 	if not function_node then
-		if function_node_err then
-			notification_utils.docscribe_notify(function_node_err, vim.log.levels.ERROR)
-		end
+		notification_utils.docscribe_notify(function_node_err, vim.log.levels.ERROR)
 		return
 	end
 
 	local function_text, node_text_err = node_utils.get_node_text(function_node)
-	if not function_text and node_text_err then
+	if not function_text then
 		notification_utils.docscribe_notify(node_text_err, vim.log.levels.ERROR)
 		return
 	end

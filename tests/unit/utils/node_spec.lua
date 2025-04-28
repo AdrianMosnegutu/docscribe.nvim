@@ -38,7 +38,7 @@ describe("docscribe.core.node", function()
 
 			assert.is_nil(node)
 			assert.is_not_nil(err)
-			assert.equals(err, "No function selected")
+			assert.equals(err, "Cursor is not inside a function block")
 		end)
 
 		it("returns a function node", function()
@@ -76,15 +76,6 @@ describe("docscribe.core.node", function()
 	end)
 
 	describe("get_node_text", function()
-		it("returns an error message if no node is provided", function()
-			local node = node_utils.get_function_node()
-			local node_text, err = node_utils.get_node_text(node)
-
-			assert.is_nil(node_text)
-			assert.is_not_nil(err)
-			assert.is_equal(err, "Could not extract node text: node is nil")
-		end)
-
 		it("returns the node's text", function()
 			vim.api.nvim_win_set_cursor(0, { 2, 5 })
 			local node = node_utils.get_function_node()
@@ -131,13 +122,6 @@ describe("docscribe.core.node", function()
 			})
 		end)
 
-		it("returns an error message if no node is provided", function()
-			local err = node_utils.delete_node_rows(nil)
-
-			assert.is_not_nil(err)
-			assert.is_equal(err, "Could not delete node: node is nil")
-		end)
-
 		it("deletes a given node from the buffer", function()
 			local node = node_utils.get_node_at_position(1, 3)
 			local err = node_utils.delete_node_rows(node)
@@ -151,13 +135,6 @@ describe("docscribe.core.node", function()
 	end)
 
 	describe("jump_to_node_start", function()
-		it("returns an error message if no node is provided", function()
-			local err = node_utils.jump_to_node_start()
-
-			assert.is_not_nil(err)
-			assert.is_equal(err, "Could not jump to node start: node is nil")
-		end)
-
 		it("jumps to the start of the node", function()
 			local node = node_utils.get_node_at_position(2, 2)
 			local start_row, start_col = node:range()
