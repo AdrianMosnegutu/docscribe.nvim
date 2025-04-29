@@ -1,3 +1,4 @@
 .git/
 .luarc*
+.stylua.toml
 .DS_Store

@@ -33,7 +33,7 @@ local function highlight_function(function_node)
     -- To highlight a function, we first need to clear all other highlights
     highlight_utils.clear_highlight()
 
-    if highlight_style == "full" then       -- The entire function block is highlighted
+    if highlight_style == "full" then          -- The entire function block is highlighted
         highlight_utils.highlight_node(function_node)
     elseif highlight_style == "signature" then -- Only the function signature's row is highlighted
         highlight_utils.highlight_signature(function_node)
