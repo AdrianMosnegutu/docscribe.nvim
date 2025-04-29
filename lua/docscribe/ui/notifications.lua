@@ -7,6 +7,8 @@ local current_spinner_idx = 0
 local spinner_timer
 local spinner_notification_id
 
+local is_updating = false
+
 function M.docscribe_notify(message, log_level, opts)
     opts = opts or {}
     opts.title = "docscribe.nvim"
@@ -24,14 +26,31 @@ function M.start_spinner_notification()
     spinner_timer = vim.loop.new_timer()
 
     local function update_spinner()
+        if is_updating then
+            return
+        end
+
+        is_updating = true
+
         current_spinner_idx = (current_spinner_idx % #spinner_chars) + 1
 
-        spinner_notification_id =
-            M.docscribe_notify(spinner_chars[current_spinner_idx] .. " Generating docs...", vim.log.levels.WARN, {
-                timeout = false,
-                hide_from_history = true,
-                replace = spinner_notification_id,
-            })
+        if not spinner_notification_id then
+            spinner_notification_id =
+                M.docscribe_notify(spinner_chars[current_spinner_idx] .. " Generating docs...", vim.log.levels.WARN, {
+                    timeout = false,
+                    hide_from_history = true,
+                })
+        else
+            -- If notification_id exists, replace it
+            spinner_notification_id =
+                M.docscribe_notify(spinner_chars[current_spinner_idx] .. " Generating docs...", vim.log.levels.WARN, {
+                    timeout = false,
+                    hide_from_history = true,
+                    replace = spinner_notification_id,
+                })
+        end
+
+        is_updating = false
     end
 
     spinner_timer:start(0, 100, function()

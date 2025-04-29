@@ -1,6 +1,5 @@
 require("plenary.busted")
 
-local generator = require("docscribe.utils.generator")
 local config = require("docscribe.config")
 local node_utils = require("docscribe.utils.node")
 local doc_utils = require("docscribe.utils.doc")
@@ -8,6 +7,8 @@ local llm_utils = require("docscribe.utils.llm")
 local notification_utils = require("docscribe.ui.notifications")
 local highlight_utils = require("docscribe.ui.highlights")
 local stub = require("luassert.stub")
+
+local M = require("docscribe.utils.generator")
 
 local function stub_dependencies()
     stub(notification_utils, "start_spinner_notification")
@@ -60,7 +61,7 @@ describe("docscribe.utils.generator", function()
 
     describe("is_generating", function()
         it("returns false initially", function()
-            assert.is_false(generator.is_generating())
+            assert.is_false(M.is_generating())
         end)
     end)
 
@@ -69,9 +70,9 @@ describe("docscribe.utils.generator", function()
             local docs = "Generated documentation"
             simulate_llm_response(docs, nil)
 
-            assert.is_false(generator.is_generating())
-            generator.generate_docs("function_code", 0, 0)
-            assert.is_true(generator.is_generating())
+            assert.is_false(M.is_generating())
+            M.generate_docs("function_code", 0, 0)
+            assert.is_true(M.is_generating())
 
             assert.stub(notification_utils.start_spinner_notification).was_called()
             assert.stub(llm_utils.generate_docs).was_called(1)
@@ -81,9 +82,9 @@ describe("docscribe.utils.generator", function()
             assert.equals("function", type(args[2]))
 
             vim.wait(1000, function()
-                return generator.is_generating() == false
+                return M.is_generating() == false
             end, 10)
-            assert.is_false(generator.is_generating())
+            assert.is_false(M.is_generating())
         end)
 
         it("handles successful documentation generation", function()
@@ -93,9 +94,9 @@ describe("docscribe.utils.generator", function()
 
             simulate_llm_response(docs, nil)
 
-            assert.is_false(generator.is_generating())
-            generator.generate_docs("function_code", 0, 0)
-            assert.is_true(generator.is_generating())
+            assert.is_false(M.is_generating())
+            M.generate_docs("function_code", 0, 0)
+            assert.is_true(M.is_generating())
 
             wait_for_stub_call(highlight_utils.clear_highlight)
 
@@ -104,16 +105,16 @@ describe("docscribe.utils.generator", function()
             assert.stub(highlight_utils.highlight_node).was_called_with("mock_node")
             assert.stub(highlight_utils.clear_highlight).was_called()
 
-            assert.is_false(generator.is_generating())
+            assert.is_false(M.is_generating())
         end)
 
         it("handles failed documentation generation", function()
             local err = "LLM Error"
             simulate_llm_response(nil, err)
 
-            assert.is_false(generator.is_generating())
-            generator.generate_docs("function_code", 0, 0)
-            assert.is_true(generator.is_generating())
+            assert.is_false(M.is_generating())
+            M.generate_docs("function_code", 0, 0)
+            assert.is_true(M.is_generating())
 
             wait_for_stub_call(highlight_utils.clear_highlight)
 
@@ -122,7 +123,7 @@ describe("docscribe.utils.generator", function()
                 .was_called_with("Could not generate docs: " .. err, true)
             assert.stub(highlight_utils.clear_highlight).was_called()
 
-            assert.is_false(generator.is_generating())
+            assert.is_false(M.is_generating())
         end)
 
         it("does not highlight if node is nil", function()
@@ -132,15 +133,15 @@ describe("docscribe.utils.generator", function()
             local docs = "Generated documentation"
             simulate_llm_response(docs)
 
-            assert.is_false(generator.is_generating())
-            generator.generate_docs("function_code", 0, 0)
-            assert.is_true(generator.is_generating())
+            assert.is_false(M.is_generating())
+            M.generate_docs("function_code", 0, 0)
+            assert.is_true(M.is_generating())
 
             wait_for_stub_call(notification_utils.stop_spinner_notification)
 
             assert.stub(highlight_utils.highlight_node).was_not_called()
 
-            assert.is_false(generator.is_generating())
+            assert.is_false(M.is_generating())
         end)
 
         it("clears highlight after the configured timeout", function()
@@ -149,7 +150,7 @@ describe("docscribe.utils.generator", function()
             node_utils.get_node_at_position.returns("mock_node")
 
             simulate_llm_response(docs, nil)
-            generator.generate_docs("function_code", 0, 0)
+            M.generate_docs("function_code", 0, 0)
 
             wait_for_stub_call(highlight_utils.highlight_node)
             assert.stub(highlight_utils.highlight_node).was_called_with("mock_node")
@@ -167,9 +168,9 @@ describe("docscribe.utils.generator", function()
             local docs = "Generated documentation"
             simulate_llm_response(docs, nil)
 
-            assert.is_false(generator.is_generating())
-            generator.generate_docs("function_code", 0, 0)
-            assert.is_true(generator.is_generating())
+            assert.is_false(M.is_generating())
+            M.generate_docs("function_code", 0, 0)
+            assert.is_true(M.is_generating())
 
             wait_for_stub_call(doc_utils.insert_docs)
 
@@ -177,7 +178,7 @@ describe("docscribe.utils.generator", function()
             assert.stub(notification_utils.docscribe_notify).was_called_with("Insertion Error", vim.log.levels.ERROR)
             assert.stub(highlight_utils.highlight_node).was_not_called()
 
-            assert.is_false(generator.is_generating())
+            assert.is_false(M.is_generating())
         end)
     end)
 end)
