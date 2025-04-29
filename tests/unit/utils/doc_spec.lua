@@ -207,15 +207,15 @@ describe("docscribe.core.doc", function()
             assert.is_equal(
                 buffer_text,
                 "void test() {\n"
-                .. "\n"
-                .. "}\n"
-                .. "\n"
-                .. "/**\n"
-                .. " * @brief This is the app's entry point\n"
-                .. "*/\n"
-                .. "int main() {\n"
-                .. "    return 0;\n"
-                .. "}"
+                    .. "\n"
+                    .. "}\n"
+                    .. "\n"
+                    .. "/**\n"
+                    .. " * @brief This is the app's entry point\n"
+                    .. "*/\n"
+                    .. "int main() {\n"
+                    .. "    return 0;\n"
+                    .. "}"
             )
         end)
 
@@ -239,13 +239,13 @@ describe("docscribe.core.doc", function()
             assert.is_equal(
                 buffer_text,
                 "class MyClass {\n"
-                .. "    /**\n"
-                .. "     * This is a function\n"
-                .. "    */\n"
-                .. "    function test() {\n"
-                .. "\n"
-                .. "    }\n"
-                .. "}"
+                    .. "    /**\n"
+                    .. "     * This is a function\n"
+                    .. "    */\n"
+                    .. "    function test() {\n"
+                    .. "\n"
+                    .. "    }\n"
+                    .. "}"
             )
         end)
     end)

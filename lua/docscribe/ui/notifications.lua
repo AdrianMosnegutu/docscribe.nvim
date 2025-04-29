@@ -63,7 +63,7 @@ end
 --- Stops the spinner notification and replaces it with a final message.
 ---
 --- @param message string: The final message to display after stopping the spinner.
---- @param caught_an_error boolean: Indicates whether an error occurred, which
+--- @param caught_an_error boolean|nil: Indicates whether an error occurred, which
 --- determines the log level (INFO or ERROR).
 function M.stop_spinner_notification(message, caught_an_error)
     if spinner_timer then

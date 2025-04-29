@@ -27,7 +27,7 @@ function M.get_node_at_cursor()
     return node
 end
 
-function M.get_node_text(node)
+function M.get_node_text(_)
     return { "mocked_function_name" }
 end
 

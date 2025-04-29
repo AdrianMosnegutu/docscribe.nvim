@@ -31,26 +31,34 @@ local docs_are_highlighted = false
 --- @param insertion_row integer The row where the documentation should be inserted.
 --- @param indentation_level integer The number of spaces to use for indenting the documentation.
 local function handle_successful_doc_generation(docs, insertion_row, indentation_level)
+    -- Replace the spinner with the success state notification
     notification_utils.stop_spinner_notification("Successfully generated docs")
 
+    -- Clear the loading state function highlight
     highlight_utils.clear_highlight()
     docs_are_highlighted = false
 
+    -- Try to insert the docs in the specified position
     local insertion_err = doc_utils.insert_docs(insertion_row, indentation_level, docs)
     if insertion_err then
         notification_utils.docscribe_notify(insertion_err, vim.log.levels.ERROR)
         return
     end
 
+    -- Try to get the docs node that was just inserted
     local docs_node, docs_node_err = node_utils.get_node_at_position(insertion_row, indentation_level)
     if not docs_node then
+        --- @diagnostic disable-next-line: param-type-mismatch
         notification_utils.docscribe_notify(docs_node_err, vim.log.levels.ERROR)
         return
     end
 
+    -- Highlight the generated docs
     highlight_utils.highlight_node(docs_node)
     docs_are_highlighted = true
 
+    -- After a set amount of time (the highlight timeout config option), clear the
+    -- docs highlight
     local timer = vim.loop.new_timer()
     timer:start(config.get_config("ui").highlight.timeout, 0, function()
         vim.schedule(function()
@@ -85,11 +93,14 @@ function M.generate_docs(function_text, insertion_row, indentation_level)
     is_generating = true
     docs_are_highlighted = false
 
+    -- Start the loading state
     notification_utils.start_spinner_notification()
 
+    -- Create an async job for generating the docs and wait for the response
     llm_utils.generate_docs(function_text, function(docs, err)
         is_generating = false
 
+        -- If doc generation failed, show the error and clear all highlights
         if not docs then
             vim.schedule(function()
                 notification_utils.stop_spinner_notification("Could not generate docs: " .. err, true)
@@ -98,6 +109,7 @@ function M.generate_docs(function_text, insertion_row, indentation_level)
             return
         end
 
+        -- Handle successfull docstring generation
         vim.schedule(function()
             handle_successful_doc_generation(docs, insertion_row, indentation_level)
         end)
