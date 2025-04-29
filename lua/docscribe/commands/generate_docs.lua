@@ -33,7 +33,7 @@ local function highlight_function(function_node)
     -- To highlight a function, we first need to clear all other highlights
     highlight_utils.clear_highlight()
 
-    if highlight_style == "full" then          -- The entire function block is highlighted
+    if highlight_style == "full" then -- The entire function block is highlighted
         highlight_utils.highlight_node(function_node)
     elseif highlight_style == "signature" then -- Only the function signature's row is highlighted
         highlight_utils.highlight_signature(function_node)
@@ -66,6 +66,7 @@ function M.generate_docs_command()
     -- Get the outer-most function from under the cursor
     local function_node, function_node_err = node_utils.get_function_node()
     if not function_node then
+        --- @diagnostic disable-next-line: param-type-mismatch
         notification_utils.docscribe_notify(function_node_err, vim.log.levels.ERROR)
         return
     end
@@ -73,6 +74,7 @@ function M.generate_docs_command()
     -- Get the function's code
     local function_text, node_text_err = node_utils.get_node_text(function_node)
     if not function_text then
+        --- @diagnostic disable-next-line: param-type-mismatch
         notification_utils.docscribe_notify(node_text_err, vim.log.levels.ERROR)
         return
     end
