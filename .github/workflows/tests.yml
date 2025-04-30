@@ -1,0 +1,58 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Neovim
+        run: |
+          sudo add-apt-repository ppa:neovim-ppa/unstable -y
+          sudo apt-get update
+          sudo apt-get install -y neovim
+
+      - name: Install plenary.nvim
+        run: |
+          mkdir -p ~/.local/share/nvim/site/pack/plenary/start
+          git clone https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/plenary/start/plenary.nvim
+
+      - name: Run tests and capture output
+        run: |
+          set -o pipefail
+          nvim --headless -c "lua require('plenary.test_harness').test_directory('tests', { minimal_init = 'tests/minimal_init.lua' })" +qall 2>&1 | tee plenary_test_output.log
+
+      - name: Extract and summarize failures
+        if: failure()
+        run: |
+          echo "### ❌ Test Failures Summary" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          awk '
+            BEGIN {
+              # Define escape code pattern
+              esc = sprintf("%c", 27)
+            }
+            {
+              gsub(esc "\\[[0-9;]*m", "") # Remove ANSI codes
+            }
+            /Fail\s*\|\|/ { in_fail = 1 }
+            in_fail {
+              print
+              if (/stack traceback:/) {
+                print ""
+                in_fail = 0
+              }
+            }
+          ' plenary_test_output.log >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
