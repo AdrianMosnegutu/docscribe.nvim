@@ -153,7 +153,7 @@ describe("docscribe.core.node", function()
             assert.is_nil(err)
 
             local cursor_row, cursor_col = unpack(vim.api.nvim_win_get_cursor(0))
-            assert.is_equal(start_row, cursor_row - 1)
+            assert.is_equal(start_row, cursor_row - 2)
             assert.is_equal(start_col, cursor_col)
         end)
     end)
