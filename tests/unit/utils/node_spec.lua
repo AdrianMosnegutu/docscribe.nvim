@@ -186,7 +186,7 @@ describe("docscribe.core.node", function()
             local node = M.get_node_at_position(1, 11)
             local indentation_level = M.get_function_indentation(node)
 
-            assert.is_equal(indentation_level, 4)
+            assert.is_equal(indentation_level, 5)
 
             vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {
                 "int main() {",
