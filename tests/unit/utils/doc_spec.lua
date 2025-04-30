@@ -85,7 +85,7 @@ describe("docscribe.core.doc", function()
             local docs = node_utils.get_node_text(docs_node)
 
             assert.is_not_nil(docs_node)
-            assert.is_equal(docs, "/*\n * @brief This is the app's entry point\n*/")
+            assert.is_equal(docs, "/*\n * @briefd This is the app's entry point\n*/")
         end)
 
         it("returns the associated docs node for an indented function node", function()
