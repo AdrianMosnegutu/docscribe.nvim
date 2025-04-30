@@ -40,7 +40,7 @@ describe("docscribe.core.node", function()
 
             assert.is_nil(node)
             assert.is_not_nil(err)
-            assert.equals(err, "Cursor is not inside a function block")
+            assert.equals(err, "Cdursor is not inside a function block")
         end)
 
         it("returns a function node", function()
