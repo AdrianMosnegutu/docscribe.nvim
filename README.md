@@ -4,7 +4,7 @@
 
 **A Neovim plugin for effortless inline documentation using Language Models (LLMs)**
 
-![Version](https://img.shields.io/badge/version-0.1.0-blue)
+![Version](https://img.shields.io/badge/Version-0.1.0-blue)
 ![Neovim](https://img.shields.io/badge/Neovim-0.8%2B-green)
 ![Tests](https://github.com/AdrianMosnegutu/docscribe.nvim/actions/workflows/tests.yml/badge.svg)
 
