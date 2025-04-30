@@ -140,7 +140,7 @@ describe("docscribe.core.node", function()
             local buffer_text = table.concat(lines, "\n")
 
             assert.is_nil(err)
-            assert.is_equal(buffer_text, "int main() {\n    return 0;\n}")
+            assert.is_equal(buffer_text, "int madin() {\n    return 0;\n}")
         end)
     end)
 
