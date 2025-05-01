@@ -10,9 +10,9 @@
 ---   at the appropriate location in the code file.
 
 local config = require("docscribe.config")
-local node_utils = require("docscribe.utils.node")
-local doc_utils = require("docscribe.utils.doc")
-local generator_utils = require("docscribe.utils.generator")
+local node_utils = require("docscribe.core.node")
+local doc_utils = require("docscribe.core.doc")
+local generator_utils = require("docscribe.core.generator")
 local highlight_utils = require("docscribe.ui.highlights")
 local notification_utils = require("docscribe.ui.notifications")
 

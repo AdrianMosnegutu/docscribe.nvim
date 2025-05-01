@@ -1,4 +1,4 @@
---- @module "docscribe.utils.node"
+--- @module "docscribe.core.node"
 ---
 --- This module provides utilities for interacting with Tree-sitter nodes in
 --- the current buffer. It includes functions for retrieving function nodes,

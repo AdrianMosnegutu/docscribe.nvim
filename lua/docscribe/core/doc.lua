@@ -1,11 +1,11 @@
---- @module "docscribe.utils.doc"
+--- @module "docscribe.core.doc"
 ---
 --- This module provides utilities for handling documentation insertion and retrieval
 --- for function nodes in code files. It includes methods for locating associated
 --- documentation nodes and inserting documentation at a specified location in the
 --- code with proper formatting and indentation.
 
-local node_utils = require("docscribe.utils.node")
+local node_utils = require("docscribe.core.node")
 
 local M = {}
 

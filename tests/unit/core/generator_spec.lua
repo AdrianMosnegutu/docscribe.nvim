@@ -1,18 +1,18 @@
 require("plenary.busted")
 
 local config = require("docscribe.config")
-local node_utils = require("docscribe.utils.node")
-local doc_utils = require("docscribe.utils.doc")
-local llm_utils = require("docscribe.utils.llm")
+local node_utils = require("docscribe.core.node")
+local doc_utils = require("docscribe.core.doc")
+local llm_utils = require("docscribe.llm")
 local notification_utils = require("docscribe.ui.notifications")
 local highlight_utils = require("docscribe.ui.highlights")
 local stub = require("luassert.stub")
 
-local M = require("docscribe.utils.generator")
+local M = require("docscribe.core.generator")
 
 local function stub_dependencies()
     stub(notification_utils, "start_spinner_notification")
-    stub(notification_utils, "stop_spinner_notification")
+    stub(notification_utils, "replace_spinner_notification")
     stub(notification_utils, "docscribe_notify")
     stub(highlight_utils, "clear_highlight")
     stub(highlight_utils, "highlight_node")
@@ -26,7 +26,7 @@ end
 
 local function revert_stubs()
     notification_utils.start_spinner_notification:revert()
-    notification_utils.stop_spinner_notification:revert()
+    notification_utils.replace_spinner_notification:revert()
     notification_utils.docscribe_notify:revert()
     highlight_utils.clear_highlight:revert()
     highlight_utils.highlight_node:revert()
@@ -100,7 +100,7 @@ describe("docscribe.utils.generator", function()
 
             wait_for_stub_call(highlight_utils.clear_highlight)
 
-            assert.stub(notification_utils.stop_spinner_notification).was_called_with("Successfully generated docs")
+            assert.stub(notification_utils.replace_spinner_notification).was_called_with("Successfully generated docs")
             assert.stub(doc_utils.insert_docs).was_called_with(0, 0, docs)
             assert.stub(highlight_utils.highlight_node).was_called_with("mock_node")
             assert.stub(highlight_utils.clear_highlight).was_called()
@@ -119,7 +119,7 @@ describe("docscribe.utils.generator", function()
             wait_for_stub_call(highlight_utils.clear_highlight)
 
             assert
-                .stub(notification_utils.stop_spinner_notification)
+                .stub(notification_utils.replace_spinner_notification)
                 .was_called_with("Could not generate docs: " .. err, true)
             assert.stub(highlight_utils.clear_highlight).was_called()
 
@@ -137,7 +137,7 @@ describe("docscribe.utils.generator", function()
             M.generate_docs("function_code", 0, 0)
             assert.is_true(M.is_generating())
 
-            wait_for_stub_call(notification_utils.stop_spinner_notification)
+            wait_for_stub_call(notification_utils.replace_spinner_notification)
 
             assert.stub(highlight_utils.highlight_node).was_not_called()
 
@@ -174,7 +174,7 @@ describe("docscribe.utils.generator", function()
 
             wait_for_stub_call(doc_utils.insert_docs)
 
-            assert.stub(notification_utils.stop_spinner_notification).was_called_with("Successfully generated docs")
+            assert.stub(notification_utils.replace_spinner_notification).was_called_with("Successfully generated docs")
             assert.stub(notification_utils.docscribe_notify).was_called_with("Insertion Error", vim.log.levels.ERROR)
             assert.stub(highlight_utils.highlight_node).was_not_called()
 

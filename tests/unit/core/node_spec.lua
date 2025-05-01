@@ -2,7 +2,7 @@
 
 require("plenary.busted")
 
-local M = require("docscribe.utils.node")
+local M = require("docscribe.core.node")
 
 describe("docscribe.core.node", function()
     local bufnr
