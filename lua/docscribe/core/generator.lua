@@ -1,4 +1,4 @@
---- @module "docscribe.utils.generator"
+--- @module "docscribe.core.generator"
 ---
 --- This module handles the process of generating documentation for functions
 --- using an LLM (Large Language Model) and managing the associated UI updates.
@@ -6,9 +6,9 @@
 --- while providing notifications to the user during the process.
 
 local config = require("docscribe.config")
-local node_utils = require("docscribe.utils.node")
-local doc_utils = require("docscribe.utils.doc")
-local llm_utils = require("docscribe.utils.llm")
+local node_utils = require("docscribe.core.node")
+local doc_utils = require("docscribe.core.doc")
+local llm_utils = require("docscribe.core.llm")
 local notification_utils = require("docscribe.ui.notifications")
 local highlight_utils = require("docscribe.ui.highlights")
 
@@ -66,6 +66,8 @@ local function handle_successful_doc_generation(docs, insertion_row, indentation
         highlight_timeout,
         0,
         vim.schedule_wrap(function()
+            -- Make sure only the most recent call clears all highlights
+            -- We don't want to prematurely clear the highlights of another function
             if token == current_highlight_token then
                 highlight_utils.clear_highlight()
             end

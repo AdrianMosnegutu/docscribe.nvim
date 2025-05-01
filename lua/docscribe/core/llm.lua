@@ -1,4 +1,4 @@
---- @module "docscribe.utils.llm"
+--- @module "docscribe.core.llm"
 ---
 --- Module for generating documentation using LLM providers, such as Ollama.
 --- This module handles generating documentation for code snippets using a prompt

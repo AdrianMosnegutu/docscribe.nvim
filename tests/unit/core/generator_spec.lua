@@ -1,14 +1,14 @@
 require("plenary.busted")
 
 local config = require("docscribe.config")
-local node_utils = require("docscribe.utils.node")
-local doc_utils = require("docscribe.utils.doc")
-local llm_utils = require("docscribe.utils.llm")
+local node_utils = require("docscribe.core.node")
+local doc_utils = require("docscribe.core.doc")
+local llm_utils = require("docscribe.core.llm")
 local notification_utils = require("docscribe.ui.notifications")
 local highlight_utils = require("docscribe.ui.highlights")
 local stub = require("luassert.stub")
 
-local M = require("docscribe.utils.generator")
+local M = require("docscribe.core.generator")
 
 local function stub_dependencies()
     stub(notification_utils, "start_spinner_notification")
