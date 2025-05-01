@@ -4,7 +4,7 @@ local mock_config = require("tests.mocks.config")
 
 local M = require("docscribe.llm")
 
-describe("docscribe.utils.llm", function()
+describe("docscribe.llm", function()
     it("generates docs successfully", function()
         local code_snippet = "function add(a, b) return a + b end"
         M.generate_docs(code_snippet, function(docs, err_msg)

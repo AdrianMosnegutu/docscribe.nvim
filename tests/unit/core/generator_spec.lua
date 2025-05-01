@@ -50,7 +50,7 @@ local function wait_for_stub_call(stub_func, timeout)
     end, 10)
 end
 
-describe("docscribe.utils.generator", function()
+describe("docscribe.core.generator", function()
     before_each(function()
         stub_dependencies()
     end)
