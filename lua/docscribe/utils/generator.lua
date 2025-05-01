@@ -17,8 +17,9 @@ local M = {}
 --- Tracks whether documentation generation is currently in progress.
 local is_generating = false
 
---- Tracks whether the generated documentation is currently highlighted.
-local docs_are_highlighted = false
+--- Acts as a semaphore mechanism ensuring only the last call to the function
+--- clears all the highlights
+local current_highlight_token = 0
 
 --- Handles the successful generation of documentation.
 ---
@@ -32,11 +33,10 @@ local docs_are_highlighted = false
 --- @param indentation_level integer The number of spaces to use for indenting the documentation.
 local function handle_successful_doc_generation(docs, insertion_row, indentation_level)
     -- Replace the spinner with the success state notification
-    notification_utils.stop_spinner_notification("Successfully generated docs")
+    notification_utils.replace_spinner_notification("Successfully generated docs")
 
     -- Clear the loading state function highlight
     highlight_utils.clear_highlight()
-    docs_are_highlighted = false
 
     -- Try to insert the docs in the specified position
     local insertion_err = doc_utils.insert_docs(insertion_row, indentation_level, docs)
@@ -55,19 +55,22 @@ local function handle_successful_doc_generation(docs, insertion_row, indentation
 
     -- Highlight the generated docs
     highlight_utils.highlight_node(docs_node)
-    docs_are_highlighted = true
+    local token = current_highlight_token
+
+    local timer = vim.loop.new_timer()
+    local highlight_timeout = config.get_config("ui").highlight.timeout
 
     -- After a set amount of time (the highlight timeout config option), clear the
     -- docs highlight
-    local timer = vim.loop.new_timer()
-    timer:start(config.get_config("ui").highlight.timeout, 0, function()
-        vim.schedule(function()
-            if docs_are_highlighted then
+    timer:start(
+        highlight_timeout,
+        0,
+        vim.schedule_wrap(function()
+            if token == current_highlight_token then
                 highlight_utils.clear_highlight()
             end
-            docs_are_highlighted = false
         end)
-    end)
+    )
 end
 
 --- Checks whether documentation generation is currently in progress.
@@ -91,7 +94,7 @@ end
 --- @param indentation_level integer The number of spaces to use for indenting the documentation.
 function M.generate_docs(function_text, insertion_row, indentation_level)
     is_generating = true
-    docs_are_highlighted = false
+    current_highlight_token = current_highlight_token + 1
 
     -- Start the loading state
     notification_utils.start_spinner_notification()
@@ -103,7 +106,7 @@ function M.generate_docs(function_text, insertion_row, indentation_level)
         -- If doc generation failed, show the error and clear all highlights
         if not docs then
             vim.schedule(function()
-                notification_utils.stop_spinner_notification("Could not generate docs: " .. err, true)
+                notification_utils.replace_spinner_notification("Could not generate docs: " .. err, true)
                 highlight_utils.clear_highlight()
             end)
             return
