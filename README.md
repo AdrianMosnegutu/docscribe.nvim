@@ -86,7 +86,7 @@ See `docscribe.nvim` in action:
 - **Visual Feedback**  
   Real-time spinner notifications and function highlighting during documentation generation.
 - **Smart Docstring Management**  
-  Automatically replace existing docstrings when regenerating documentation.
+  Existing docstrings are automatically detected and removed before inserting the new one—no need to manually delete old comments. Just run the command again to regenerate fresh docs.
 
 ---
 
@@ -204,10 +204,11 @@ Currently, `docscribe.nvim` supports Ollama as the LLM provider. You need to hav
 
 That's it! `docscribe.nvim` will:
 
-- Identify the function
-- Generate appropriate documentation based on the language
-- Insert the documentation at the correct position
-- Show a visual notification of the process
+- Detect the function at your cursor location.
+- Automatically remove any existing docstring right above the function.
+- Generate fresh documentation based on the function’s contents and language.
+- Insert the new docstring in the appropriate format and location.
+- Provide visual feedback with spinner and highlight animations.
 
 ### Tips for Best Results
 
