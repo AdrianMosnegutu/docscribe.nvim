@@ -8,7 +8,7 @@
 local config = require("docscribe.config")
 local node_utils = require("docscribe.core.node")
 local doc_utils = require("docscribe.core.doc")
-local llm_utils = require("docscribe.core.llm")
+local llm_utils = require("docscribe.llm")
 local notification_utils = require("docscribe.ui.notifications")
 local highlight_utils = require("docscribe.ui.highlights")
 

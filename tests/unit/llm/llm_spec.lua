@@ -2,7 +2,7 @@ require("plenary.busted")
 
 local mock_config = require("tests.mocks.config")
 
-local M = require("docscribe.core.llm")
+local M = require("docscribe.llm")
 
 describe("docscribe.utils.llm", function()
     it("generates docs successfully", function()
