@@ -1,19 +1,16 @@
 --- @module "docscribe.ui.notifications"
----
---- This module provides functionality for managing notifications in the
---- `docscribe.nvim` plugin.
----
---- It handles asynchronous user notifications, including starting and stopping
---- a spinner for long-running tasks.
+--- Utilities for managing notifications.
 
 local config = require("docscribe.config")
 
 local M = {}
 
-local spinner_chars = { "|", "/", "-", "\\" } -- Spinner characters used for the spinner animation.
-local current_spinner_idx = 0 -- Index of the current spinner character.
-local spinner_timer -- Timer handle for controlling the spinner animation.
-local spinner_notification_id -- Notification ID for the spinner, used to replace the message dynamically.
+
+local spinner_chars = { "|", "/", "-", "\\" }
+local current_spinner_idx = 0
+local spinner_interval = 100
+local spinner_timer
+local spinner_notification_id
 
 --- Updates the spinner animation by cycling through the `spinner_chars`.
 --- This function updates the spinner message in the notification.
@@ -32,14 +29,10 @@ end
 
 --- Displays a notification using Neovim's `vim.notify`.
 --- The notification always has the title **docscribe.nvim**.
----
 --- @param message string The message to display in the notification.
---- @param log_level integer The log level for the notification
---- (e.g., `vim.log.levels.INFO`).
+--- @param log_level integer The log level for the notification (e.g., `vim.log.levels.INFO`).
 --- @param opts table|nil Optional table of options for configuring the notification.
----
---- @return integer|nil notification_id The notification ID, which can be used to
---- replace or update the notification.
+--- @return integer|nil notification_id The notification ID, which can be used to replace or update the notification.
 function M.docscribe_notify(message, log_level, opts)
     opts = opts or {}
     opts.title = "docscribe.nvim"
@@ -47,8 +40,7 @@ function M.docscribe_notify(message, log_level, opts)
 end
 
 --- Starts the spinner notification animation.
---- This function initializes a timer that updates the spinner animation at regular
---- intervals (every 100ms).
+--- This function initializes a timer that updates the spinner animation at regular intervals.
 function M.start_spinner_notification()
     if spinner_timer then
         return
@@ -57,14 +49,12 @@ function M.start_spinner_notification()
     current_spinner_idx = 0
 
     spinner_timer = vim.loop.new_timer()
-    spinner_timer:start(0, 100, vim.schedule_wrap(update_spinner))
+    spinner_timer:start(0, spinner_interval, vim.schedule_wrap(update_spinner))
 end
 
 --- Stops the spinner notification and replaces it with a final message.
----
---- @param message string: The final message to display after stopping the spinner.
---- @param caught_an_error boolean|nil: Indicates whether an error occurred, which
---- determines the log level (INFO or ERROR).
+--- @param message string The final message to display after stopping the spinner.
+--- @param caught_an_error boolean|nil Indicates whether an error occurred, which determines the log level (INFO or ERROR).
 function M.replace_spinner_notification(message, caught_an_error)
     if spinner_timer then
         spinner_timer:stop()

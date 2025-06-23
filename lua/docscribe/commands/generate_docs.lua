@@ -1,13 +1,5 @@
 --- @module "docscribe.commands.generate_docs"
----
---- This module provides functions to generate and manage inline documentation for
---- functions in code files. It integrates with various utilities for handling nodes,
---- generating documentation, managing UI highlights, and sending notifications.
----
---- The main functionality includes:
---- - Highlighting function nodes based on user configuration.
---- - Generating documentation for the function under the cursor and inserting it
----   at the appropriate location in the code file.
+--- Command to generate and manage inline documentation.
 
 local config = require("docscribe.config")
 local node_utils = require("docscribe.core.node")
@@ -19,14 +11,7 @@ local notification_utils = require("docscribe.ui.notifications")
 local M = {}
 
 --- Highlights a function node based on the user's configuration.
----
---- This function clears all existing highlights and applies a new highlight style
---- to the function node. The style can be either:
---- - "full" (highlights the entire function block).
---- - "signature" (highlights only the function's signature row).
---- - "none" (doesn't highlight the function)
----
---- @param function_node TSNode The Treesitter node representing the function to highlight.
+--- @param function_node TSNode The function node to highlight.
 local function highlight_function(function_node)
     local highlight_style = config.get_config("ui").highlight.style
 
@@ -40,22 +25,7 @@ local function highlight_function(function_node)
     end
 end
 
---- Generates documentation for the function under the cursor and inserts it into
---- the code file.
----
---- This function performs the following steps:
---- 1. Checks if documentation generation is already in progress.
---- 2. Identifies the outer-most function node under the cursor.
---- 3. Retrieves the function code and highlights the function node.
---- 4. Determines the insertion row for the generated documentation:
----    - If a docstring already exists, it replaces the old docstring.
----    - Otherwise, it inserts the documentation above the function.
---- 5. Generates and inserts the documentation using the appropriate indentation level.
---- 6. Deletes the old docstring (if present) after inserting the new one.
----
---- Special behavior for Python files:
---- - Docstrings are nested within the function and placed under the function definition.
---- - The insertion row and indentation level are adjusted accordingly.
+--- Generates and inserts documentation for the function under the cursor.
 function M.generate_docs_command()
     -- Check if the plugin is already generating docs for another function
     if generator_utils.is_generating() then

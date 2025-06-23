@@ -1,14 +1,9 @@
 --- @module "docscribe.core.node"
----
---- This module provides utilities for interacting with Tree-sitter nodes in
---- the current buffer. It includes functions for retrieving function nodes,
---- extracting node text, deleting node rows, and more. These utilities are
---- designed to facilitate working with AST (Abstract Syntax Tree) nodes in
---- Neovim for tasks like code introspection and manipulation.
+--- Utilities for interacting with Tree-sitter nodes.
 
 local ts_utils = require("nvim-treesitter.ts_utils")
 
---- List of function node types that are recognized by the module.
+--- Recognized function node types.
 local function_node_types = {
     "function_declaration",
     "function_definition",
@@ -20,16 +15,9 @@ local function_node_types = {
 
 local M = {}
 
---- Retrieves the outermost function node at the current cursor position,
---- searching upwards in the syntax tree.
----
---- This function traverses the Tree-sitter AST (Abstract Syntax Tree) upwards
---- starting from the current cursor position, looking for the outermost function
---- node. If no function node is found, it returns an error message.
----
---- @return TSNode|nil function_node A Tree-sitter node representing the function,
---- or nil if no function is found.
---- @return string|nil error_msg An error message if no function node is found.
+--- Retrieves the outermost function node at the current cursor position.
+--- @return TSNode|nil function_node The function node, or `nil` if not found.
+--- @return string|nil err An error message if no function node is found.
 function M.get_function_node()
     local current_node = ts_utils.get_node_at_cursor()
     local function_node = nil
@@ -50,14 +38,9 @@ function M.get_function_node()
     return function_node
 end
 
---- Retrieves the text content of a given Tree-sitter node.
----
---- This function extracts the text within the range of the provided node
---- from the current buffer and returns it as a single string.
----
---- @param node TSNode The Tree-sitter node to extract text from.
----
---- @return string text The text content of the node.
+--- Retrieves the text content of a Tree-sitter node.
+--- @param node TSNode The node to extract text from.
+--- @return string node_text The text content of the node.
 function M.get_node_text(node)
     local bufnr = vim.api.nvim_get_current_buf()
 
@@ -68,20 +51,11 @@ function M.get_node_text(node)
     return table.concat(lines, "\n")
 end
 
---- Retrieves the Tree-sitter node at the specified position (row and column)
---- in the current buffer.
----
---- This function identifies the Tree-sitter node at a given row and column
---- in the current buffer. It validates the row to ensure it is within bounds
---- and checks if a valid Tree-sitter parser is available.
----
---- @param row integer The row number (0-indexed).
---- @param column integer The column number (0-indexed).
----
---- @return TSNode|nil node The Tree-sitter node at the specified position,
---- or nil if no node is found.
---- @return string|nil error_msg An error message if the row is out of bounds
---- or no node is found.
+--- Retrieves the Tree-sitter node at a specified position.
+--- @param row integer The 0-indexed row.
+--- @param column integer The 0-indexed column.
+--- @return TSNode|nil node The node at the position, or `nil` if not found.
+--- @return string|nil err An error message on failure.
 function M.get_node_at_position(row, column)
     local bufnr = vim.api.nvim_get_current_buf()
     local total_lines = vim.api.nvim_buf_line_count(bufnr)
@@ -104,44 +78,23 @@ function M.get_node_at_position(row, column)
     return root:named_descendant_for_range(row, column, row, column)
 end
 
---- Deletes the rows of text corresponding to a given Tree-sitter node.
----
---- This function removes all lines of text that fall within the range of
---- the provided Tree-sitter node in the current buffer.
----
---- @param node TSNode The Tree-sitter node whose range will be deleted from
---- the buffer.
+--- Deletes the rows of a Tree-sitter node.
+--- @param node TSNode The node to delete.
 function M.delete_node_rows(node)
     local start_row, _, end_row, _ = node:range()
     vim.api.nvim_buf_set_lines(0, start_row, end_row + 1, false, {})
 end
 
---- Jumps the cursor to the start position of a given Tree-sitter node.
----
---- This function moves the cursor to the starting row and column of the provided
---- Tree-sitter node in the current window.
----
---- @param node TSNode The Tree-sitter node to jump to.
+--- Jumps the cursor to the start of a Tree-sitter node.
+--- @param node TSNode The node to jump to.
 function M.jump_to_node_start(node)
     local start_row, start_col = node:range()
     vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
 end
 
---- Gets the number of leading spaces (indentation) before the function
---- definition starts.
----
---- This function checks the line where the `function_node` starts and counts
---- the number of spaces before the first non-space character, up to the
---- function's column position.
----
---- **Use Case:**
---- - Useful for determining the correct indentation level when inserting
----   documentation above the function.
----
---- @param function_node TSNode Tree-sitter node representing a function.
----
---- @return integer indentation_level The number of leading spaces (indentation width)
---- before the function keyword.
+--- Gets the indentation level of a function node.
+--- @param function_node TSNode The function node.
+--- @return integer indentation The indentation level.
 function M.get_function_indentation(function_node)
     local row, col = function_node:range()
 
