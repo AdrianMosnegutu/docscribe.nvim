@@ -1,16 +1,9 @@
 --- @module "docscribe.config"
----
---- Configuration module for Docscribe.
---- Handles global configuration settings like UI options, LLM provider settings,
---- and language-specific prompt templates.
----
---- Provides functions to setup user-provided configuration overrides
---- and to retrieve configuration values during runtime.
+--- Handles global configuration for `docscribe.nvim`.
 
 local prompt_templates = require("docscribe.prompt_templates")
 
--- Default configuration table.
--- Users can override parts of this configuration using `M.setup(user_config)`.
+--- Default configuration.
 local config = {
     ui = {
         highlight = {
@@ -41,39 +34,15 @@ local config = {
 
 local M = {}
 
---- Sets up user configuration by deep-merging it into the default config.
---- This allows users to customize only the parts they care about, without
---- redefining everything.
----
---- @param user_config table A table containing user-specified configuration
---- overrides.
----
---- Example usage:
---- ```lua
---- require("docscribe").setup({
----   llm = {
----     provider = "ollama",
----     model = "llama3.2",
----   },
----   ui = {
----     highlight = {
----       style = "full",
----       bg = "#123456",
----     },
----   },
---- })
---- ```
+--- Sets up user configuration.
+--- @param user_config table User-specified configuration overrides.
 function M.setup(user_config)
     config = vim.tbl_deep_extend("force", config, user_config)
 end
 
 --- Retrieves a configuration section by key.
---- Useful for modules that need to access the current runtime configuration.
----
---- @param key string The top-level key to retrieve from the configuration
---- table (e.g., "llm", "ui", "prompt_templates").
---- @return any Returns the value corresponding to the provided key, or nil
---- if the key does not exist.
+--- @param key string The top-level key to retrieve from the configuration.
+--- @return any value The value corresponding to the key.
 function M.get_config(key)
     return config[key]
 end
