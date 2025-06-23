@@ -15,25 +15,22 @@ local M = {}
 local function highlight_function(function_node)
     local highlight_style = config.get_config("ui").highlight.style
 
-    -- To highlight a function, we first need to clear all other highlights
     highlight_utils.clear_highlight()
 
-    if highlight_style == "full" then -- The entire function block is highlighted
+    if highlight_style == "full" then
         highlight_utils.highlight_node(function_node)
-    elseif highlight_style == "signature" then -- Only the function signature's row is highlighted
+    elseif highlight_style == "signature" then
         highlight_utils.highlight_signature(function_node)
     end
 end
 
 --- Generates and inserts documentation for the function under the cursor.
 function M.generate_docs_command()
-    -- Check if the plugin is already generating docs for another function
     if generator_utils.is_generating() then
         notification_utils.docscribe_notify("Already generating docs for a function!", vim.log.levels.ERROR)
         return
     end
 
-    -- Get the outer-most function from under the cursor
     local function_node, function_node_err = node_utils.get_function_node()
     if not function_node then
         --- @diagnostic disable-next-line: param-type-mismatch
@@ -41,7 +38,6 @@ function M.generate_docs_command()
         return
     end
 
-    -- Get the function's code
     local function_text, node_text_err = node_utils.get_node_text(function_node)
     if not function_text then
         --- @diagnostic disable-next-line: param-type-mismatch
@@ -49,12 +45,9 @@ function M.generate_docs_command()
         return
     end
 
-    -- Jump to the function's start and highlight it based on the user config
     highlight_function(function_node)
     node_utils.jump_to_node_start(function_node)
 
-    -- If the function already had an associated docstring, then the insertion row
-    -- is that of the old docstring, otherwise, it is the function's starting row
     local docs_node = doc_utils.get_associated_docs_node(function_node)
     local insertion_row = docs_node and docs_node:range() or function_node:range()
     local indentation_level = node_utils.get_function_indentation(function_node)
@@ -66,8 +59,6 @@ function M.generate_docs_command()
         indentation_level = indentation_level + 4
     end
 
-    -- Generate the docs for the given function code and situate them at the
-    -- specified row and with the specified indentation level
     generator_utils.generate_docs(function_text, insertion_row, indentation_level)
 
     -- After the main generating logic, delete the old docs. This must be done at the

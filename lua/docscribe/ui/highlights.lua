@@ -3,7 +3,6 @@
 
 local M = {}
 
--- Namespace ID for highlights.
 local ns_id = vim.api.nvim_create_namespace("docscribe_highlight")
 
 --- Highlights the signature of a function node.

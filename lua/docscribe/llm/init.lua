@@ -12,14 +12,12 @@ local M = {}
 function M.generate_docs(function_code, callback)
     local lang = vim.bo.filetype
 
-    -- Build the prompt
     local prompt_templates = config.get_config("prompt_templates")
     local prompt_template = prompt_templates[lang] or prompt_templates.default
     local prompt = prompt_template:gsub("{{code}}", function_code)
 
     local llm = config.get_config("llm")
 
-    -- Chose the configured llm provider and model
     if llm.provider == "ollama" then
         ollama.generate_response(prompt, llm.model, callback)
     else

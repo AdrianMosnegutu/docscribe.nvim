@@ -9,7 +9,6 @@ local M = {}
 --- @param function_node TSNode The function node.
 --- @return TSNode|nil docs_node The associated comment node or `nil`.
 function M.get_associated_docs_node(function_node)
-    -- Check if the function declaration is on the first line of the buffer
     local row, col = function_node:range()
     if row == 0 then
         return nil
@@ -19,7 +18,6 @@ function M.get_associated_docs_node(function_node)
     local line_before = vim.api.nvim_buf_get_lines(0, row - 1, row, false)[1]
     col = math.min(col, #line_before - 1)
 
-    -- Check if the node directly above the function node is a comment
     local above_node = node_utils.get_node_at_position(row - 1, col)
     if not above_node or above_node:type() ~= "comment" then
         return nil
@@ -34,17 +32,14 @@ end
 --- @param docs string The documentation string to insert.
 --- @return string|nil err An error message on failure, otherwise `nil`.
 function M.insert_docs(row, indentation_level, docs)
-    -- Check that the docs exist
     if #docs == 0 then
         return "Could not insert docs: no docs provided"
     end
 
-    -- Check that the indentation level is valid
     if indentation_level < 0 then
         return "Could not insert docs: indentation level is negative"
     end
 
-    -- Check that the row is valid
     local bufnr = vim.api.nvim_get_current_buf()
     local line_count = vim.api.nvim_buf_line_count(bufnr)
     if row < 0 or row >= line_count + 1 then

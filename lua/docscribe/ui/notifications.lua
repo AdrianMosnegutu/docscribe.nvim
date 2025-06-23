@@ -15,10 +15,8 @@ local spinner_notification_id
 --- Updates the spinner animation by cycling through the `spinner_chars`.
 --- This function updates the spinner message in the notification.
 local function update_spinner()
-    -- Make the index cycle infinitely through the spinner chars
     current_spinner_idx = (current_spinner_idx % #spinner_chars) + 1
 
-    -- Create or replace a new frame of the spinner notification
     spinner_notification_id =
         M.docscribe_notify(spinner_chars[current_spinner_idx] .. " Generating docs...", vim.log.levels.WARN, {
             timeout = false,
@@ -62,10 +60,8 @@ function M.replace_spinner_notification(message, caught_an_error)
         spinner_timer = nil
     end
 
-    -- Determine the log level
     local log_level = caught_an_error and vim.log.levels.ERROR or vim.log.levels.INFO
 
-    -- Replace the spinner with a final status notification (success or error)
     if spinner_notification_id then
         M.docscribe_notify(message, log_level, {
             timeout = config.get_config("ui").highlight.timeout,

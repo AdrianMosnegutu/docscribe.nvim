@@ -22,20 +22,16 @@ local current_highlight_token = 0
 --- @param insertion_row integer The insertion row.
 --- @param indentation_level integer The indentation level.
 local function handle_successful_doc_generation(docs, insertion_row, indentation_level)
-    -- Replace the spinner with the success state notification
     notification_utils.replace_spinner_notification("Successfully generated docs")
 
-    -- Clear the loading state function highlight
     highlight_utils.clear_highlight()
 
-    -- Try to insert the docs in the specified position
     local insertion_err = doc_utils.insert_docs(insertion_row, indentation_level, docs)
     if insertion_err then
         notification_utils.docscribe_notify(insertion_err, vim.log.levels.ERROR)
         return
     end
 
-    -- Try to get the docs node that was just inserted
     local docs_node, docs_node_err = node_utils.get_node_at_position(insertion_row, indentation_level)
     if not docs_node then
         --- @diagnostic disable-next-line: param-type-mismatch
@@ -43,21 +39,17 @@ local function handle_successful_doc_generation(docs, insertion_row, indentation
         return
     end
 
-    -- Highlight the generated docs
     highlight_utils.highlight_node(docs_node)
     local token = current_highlight_token
 
     local timer = vim.loop.new_timer()
     local highlight_timeout = config.get_config("ui").highlight.timeout
 
-    -- After a set amount of time (the highlight timeout config option), clear the
-    -- docs highlight
     timer:start(
         highlight_timeout,
         0,
         vim.schedule_wrap(function()
             -- Make sure only the most recent call clears all highlights
-            -- We don't want to prematurely clear the highlights of another function
             if token == current_highlight_token then
                 highlight_utils.clear_highlight()
             end
@@ -79,14 +71,10 @@ function M.generate_docs(function_text, insertion_row, indentation_level)
     is_generating = true
     current_highlight_token = current_highlight_token + 1
 
-    -- Start the loading state
     notification_utils.start_spinner_notification()
-
-    -- Create an async job for generating the docs and wait for the response
     llm_utils.generate_docs(function_text, function(docs, err)
         is_generating = false
 
-        -- If doc generation failed, show the error and clear all highlights
         if not docs then
             vim.schedule(function()
                 notification_utils.replace_spinner_notification("Could not generate docs: " .. err, true)
@@ -95,7 +83,6 @@ function M.generate_docs(function_text, insertion_row, indentation_level)
             return
         end
 
-        -- Handle successfull docstring generation
         vim.schedule(function()
             handle_successful_doc_generation(docs, insertion_row, indentation_level)
         end)
