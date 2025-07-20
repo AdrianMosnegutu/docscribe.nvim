@@ -1,19 +1,23 @@
+--- @module "docscribe.prompt_templates.default"
+
 return [[
-    You are a documentation assistant.
+You are an expert programmer tasked with writing clear, concise, and accurate documentation for a given function.
 
-    Generate a **proper documentation comment block** for the function below. The output must:
+Your response must contain ONLY the documentation block.
+Do NOT include the original function code in your response.
+Do NOT wrap the documentation in markdown code fences (e.g., ```).
 
-    1. Include a **clear and concise function description**.
-    2. Document **each parameter** with the appropriate tags, describing the name, type, and purpose.
-    3. Include a **return value** description with the return type and a brief explanation.
-    4. If the function throws any exceptions, include an exception tag.
-    5. Include an example block showing typical usage.
+Generate documentation for the following code.
 
-    **Do NOT wrap the output in backticks, triple backticks, or any Markdown formatting.**
-    Do **not** include the function code in your output.
-    Just return the unwrapped documentation block as plain text.
+Follow these rules:
+1.  The documentation should be a block comment.
+2.  The main description should be a single, brief paragraph explaining the function's purpose. Do not describe the parameters or return value in the description.
+3.  Use tags (e.g., @param, @return) to describe parameters and return values.
+4.  Only include a usage example if the function's logic is complex or has important edge cases. The example must be meaningful and demonstrate a non-obvious use case. Do not show a trivial call.
+5.  Add a blank line between the main description and the tag sections.
 
-    ```
-    {{code}}
-    ```
+Code:
+```
+{{code}}
+```
 ]]

@@ -2,7 +2,12 @@
 --- Generates documentation using LLM providers.
 
 local config = require("docscribe.config")
-local ollama = require("docscribe.llm.providers.ollama")
+
+local providers = {
+    ollama = require("docscribe.llm.providers.ollama"),
+    google = require("docscribe.llm.providers.google"),
+    groq = require("docscribe.llm.providers.groq"),
+}
 
 local M = {}
 
@@ -16,12 +21,16 @@ function M.generate_docs(function_code, callback)
     local prompt_template = prompt_templates[lang] or prompt_templates.default
     local prompt = prompt_template:gsub("{{code}}", function_code)
 
-    local llm = config.get_config("llm")
+    local llm_config = config.get_config("llm")
+    local provider_name = llm_config.provider
+    local provider_opts = llm_config.provider_opts[provider_name]
 
-    if llm.provider == "ollama" then
-        ollama.generate_response(prompt, llm.model, callback)
+    local provider = providers[provider_name]
+
+    if provider then
+        provider.generate_response(prompt, callback, provider_opts)
     else
-        callback(nil, 'Invalid LLM runner "' .. llm.provider .. '"')
+        callback(nil, 'Invalid LLM provider "' .. provider_name .. '"')
     end
 end
 

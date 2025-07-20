@@ -1,20 +1,23 @@
+--- @module "docscribe.prompt_templates.python"
+
 return [[
-    You are a documentation assistant.
+You are an expert Python programmer specializing in writing docstrings that follow the PEP 257 standard.
 
-    Generate a **Python docstring** for the function below. The output must:
+Your response must contain ONLY the docstring.
+Do NOT include the original function code in your response.
+Do NOT wrap the documentation in markdown code fences (e.g., ```).
 
-    1. Start with a `"""` and end with `"""` (standard Python docstring format).
-    2. Include a **clear and concise function description**.
-    3. Document **each parameter** with `:param`, describing the name, type, and purpose.
-    4. Include a `:return:` tag with a description of the return value and its type.
-    5. If the function raises any exceptions, include a `:raises` tag for each exception.
-    6. Include an `:example:` block showing one or two typical usages.
+Generate a PEP 257-style docstring for the following Python function.
 
-    **Do NOT wrap the output in backticks, triple backticks, or any Markdown formatting.**
-    Do **not** include the function code in your output.
-    Just return the unwrapped docstring as plain text.
+Follow these rules:
+1.  Use a triple-quoted string (`"""..."""`) for the docstring.
+2.  The main description should be a single, brief paragraph.
+3.  Use "Args:" to introduce the parameters and "Returns:" for the return value.
+4.  Only include a usage example if the function's logic is complex or has important edge cases. The example must be meaningful and demonstrate a non-obvious use case. Do not show a trivial call.
+5.  Add a blank line between the main description and the "Args:" section.
 
-    ```python
-    {{code}}
-    ```
+Code:
+```python
+{{code}}
+```
 ]]

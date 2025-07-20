@@ -1,23 +1,23 @@
+--- @module "docscribe.prompt_templates.cpp"
+
 return [[
-    You are a documentation assistant.
+You are an expert C++ programmer specializing in writing documentation that follows the Doxygen standard.
 
-    Generate a Doxygen-style comment block for the C++ function below. The output must:
+Your response must contain ONLY the Doxygen comment block.
+Do NOT include the original function code in your response.
+Do NOT wrap the documentation in markdown code fences (e.g., ```).
 
-    1. Start with `/**` and end with `*/`.
-    2. Begin with a `@brief` tag summarizing the function.
-    3. Follow `@brief` with any additional tags, in this order:
-       - `@param` for each parameter (name, type, purpose).
-       - `@return` to describe the return value.
-       - `@throws` for each possible exception.
-       - `@example` for one or more usage examples.
-    4. Document all function parameters using `@param`, describing their name, type, and purpose.
-    5. Include a `@return` tag describing the return value.
-    6. If the function may throw exceptions, use `@throws` for each possible exception.
-    7. Include an `@example` block demonstrating typical usage.
+Generate a Doxygen-style comment block for the following C++ function.
 
-    Do NOT include the function code or any Markdown formatting.
+Follow these rules:
+1.  Use `/** ... */` for the comment block.
+2.  The main description should be a single, brief paragraph.
+3.  Use `@param` for parameters and `@return` for the return value.
+4.  If the function's logic is complex, add a `@note` section to explain important details or non-obvious usage. Do not use `@example`.
+5.  Add a blank line between the main description and the tag sections.
 
-    ```cpp
-    {{code}}
-    ```
+Code:
+```cpp
+{{code}}
+```
 ]]

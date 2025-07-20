@@ -6,7 +6,22 @@ return {
                 default = "Default template: {{code}}",
             }
         elseif key == "llm" then
-            return { provider = "ollama", model = "mock_model" }
+            return {
+                provider = "ollama",
+                provider_opts = {
+                    ollama = {
+                        model = "mock_model",
+                    },
+                    google = {
+                        model = "mock_model",
+                        api_key = "mock_api_key",
+                    },
+                    groq = {
+                        model = "mock_model",
+                        api_key = "mock_api_key",
+                    },
+                },
+            }
         end
     end,
 }

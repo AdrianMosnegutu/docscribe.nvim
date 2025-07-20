@@ -1,19 +1,23 @@
+--- @module "docscribe.prompt_templates.lua"
+
 return [[
-    You are a documentation assistant.
+You are an expert Lua programmer specializing in writing documentation that follows the EmmyLua/LuaDoc standard.
 
-    Generate a **Lua docstring** for the function below. The output must:
+Your response must contain ONLY the LuaDoc comment block.
+Do NOT include the original function code in your response.
+Do NOT wrap the documentation in markdown code fences (e.g., ```).
 
-    1. Start with `---` for each line (standard Lua docstring format).
-    2. Include a **clear and concise function description**.
-    3. Document **each parameter** with `@param`, including the name, type, and a brief description.
-    4. Include a `@return` tag for each return value, with its type and a brief description.
-    5. If the function raises any errors, include a `@error` tag with a description of the error.
+Generate a LuaDoc-style comment block for the following Lua function.
 
-    **Do NOT wrap the output in backticks, triple backticks, or any Markdown formatting.**
-    Do **not** include the function code in your output.
-    Just return the unwrapped docstring as plain text.
+Follow these rules:
+1.  Use `---` for each line of the comment block.
+2.  The main description should be a single, brief paragraph.
+3.  Use `@param` for parameters and `@return` for the return value. Include types where appropriate.
+4.  Only include a usage example if the function's logic is complex or has important edge cases. The example must be meaningful and demonstrate a non-obvious use case. Use the `@usage` tag for the example.
+5.  Add a blank line between the main description and the tag sections.
 
-    ```lua
-    {{code}}
-    ```
+Code:
+```lua
+{{code}}
+```
 ]]
