@@ -7,16 +7,24 @@ local prompt_templates = require("docscribe.prompt_templates")
 local config = {
     ui = {
         highlight = {
-            style = "signature",        -- "signature" | "full" | "none" function highlight
-            timeout = 2000,             -- Time (ms) before highlight fades
-            bg = "#545454",             -- Highlight background color
+            style = "signature", -- "signature" | "full" | "none" function highlight
+            timeout = 2000,      -- Time (ms) before highlight fades
+            bg = "#545454",      -- Highlight background color
         },
     },
     llm = {
-        provider = "ollama",            -- Backend used for LLM (e.g., ollama, openai)
-        model = "llama3.2",             -- Default model used for docs
+        provider = "ollama", -- Backend used for LLM (e.g., ollama, google)
+        provider_opts = {
+            ollama = {
+                model = "llama3.2", -- Default model used for docs
+            },
+            google = {
+                model = "gemini-1.5-flash",
+                api_key = os.getenv("GOOGLE_API_KEY"), -- API key for Google's Gemini
+            },
+        },
     },
-    prompt_templates = {                -- Set of prompt templates for each programming language
+    prompt_templates = { -- Set of prompt templates for each programming language
         default = prompt_templates.default_template,
         h = prompt_templates.c_template,
         c = prompt_templates.c_template,
