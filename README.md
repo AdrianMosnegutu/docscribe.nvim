@@ -2,9 +2,9 @@
 
 # ✨ docscribe.nvim ✨
 
-**A Neovim plugin for effortless inline documentation using Language Models (LLMs)**
+**A Neovim plugin for effortless inline documentation using Multiple Language Model Providers**
 
-![Version](https://img.shields.io/badge/Version-0.1.0-blue)
+![Version](https://img.shields.io/badge/Version-0.2.0-blue)
 ![Neovim](https://img.shields.io/badge/Neovim-0.8%2B-green)
 ![Tests](https://github.com/AdrianMosnegutu/docscribe.nvim/actions/workflows/tests.yml/badge.svg)
 
@@ -12,232 +12,235 @@
 
 ---
 
-## 📚 Table of Contents
-
-- [🎉 v0.1.0 Stable Release](#-v010-stable-release)
-- [🎥 Demo](#-demo)
-- [✨ Features](#-features)
-- [⚙️ Installation](#️-installation)
-- [⚙️ Configuration](#️-configuration)
-  - [Custom Prompt Templates](#custom-prompt-templates)
-  - [LLM Configuration](#llm-configuration)
-- [🚀 Usage](#-usage)
-  - [Basic Usage](#basic-usage)
-  - [Tips for Best Results](#tips-for-best-results)
-- [🛣️ Roadmap](#️-roadmap)
-- [🤝 Contributing](#-contributing)
-- [📝 License](#-license)
-- [⭐️ Support](#️-support)
-
-## 🎉 v0.1.0 Stable Release
-
-`docscribe.nvim` is now available as a stable v0.1.0 release! Generate high-quality, contextually aware documentation for your code with a single command.
-
-### Supported Languages & LLM Providers
-
-<div style="display: flex; flex-direction: row; justify-content: center; gap: 2rem; align-items: flex-start;">
-  <table>
-    <thead>
-      <tr><th colspan="2">Supported Languages</th></tr>
-      <tr><th>Language</th><th>Support Level</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>JavaScript</td><td>✅ Full</td></tr>
-      <tr><td>TypeScript</td><td>✅ Full</td></tr>
-      <tr><td>C</td><td>✅ Full</td></tr>
-      <tr><td>Java</td><td>🟡 Limited</td></tr>
-      <tr><td>C++</td><td>🟡 Limited</td></tr>
-      <tr><td>Python</td><td>🟡 Limited</td></tr>
-    </tbody>
-  </table>
-
-  <table>
-    <thead>
-      <tr><th colspan="2">Supported LLM Providers</th></tr>
-      <tr><th>Provider</th><th>Status</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Ollama</td><td>✅ Supported</td></tr>
-      <tr><td>OpenAI</td><td>🚧 Planned</td></tr>
-      <tr><td>Anthropic</td><td>🚧 Planned</td></tr>
-      <tr><td>Local Heuristics</td><td>🚧 Planned</td></tr>
-    </tbody>
-  </table>
-</div>
-
----
-
 ## 🎥 Demo
-
-See `docscribe.nvim` in action:
 
 ![Demo GIF](media/demo.gif)
 
 ---
 
-## ✨ Features
+## ✨ What It Does
 
-- **Function Documentation Generation**  
-  Automatically generate and insert documentation for functions with language-specific formatting.
-- **LLM-Powered Documentation**  
-  Integration with Ollama for intelligent, contextual documentation generation.
-- **Multiple Language Support**  
-  Dedicated prompt templates optimized for each supported language.
-- **Visual Feedback**  
-  Real-time spinner notifications and function highlighting during documentation generation.
-- **Smart Docstring Management**  
-  Existing docstrings are automatically detected and removed before inserting the new one—no need to manually delete old comments. Just run the command again to regenerate fresh docs.
+`docscribe.nvim` automatically generates professional documentation for your functions. Simply place your cursor inside any function and run `:DocscribeGenerate` to create language-appropriate docstrings that follow industry standards.
+
+### 🎨 Language Support
+
+| Language | Support Level | Documentation Style |
+|----------|---------------|-------------------|
+| JavaScript | ✅ Full | JSDoc |
+| TypeScript | ✅ Full | JSDoc with types |
+| C | ✅ Full | Doxygen |
+| Java | 🟡 Limited | Javadoc |
+| C++ | 🟡 Limited | Doxygen |
+| Python | 🟡 Limited | Google style |
+| Lua | 🟡 Limited | LuaDoc |
+
+### 🔌 Multiple LLM Providers
+
+Choose the provider that best fits your needs:
+
+| Provider | Type | Best For |
+|----------|------|----------|
+| 🦙 **Ollama** | Local | Privacy & Offline Development |
+| 🧠 **Google Gemini** | Cloud API | Powerful Language Models |
+| ⚡ **Groq** | Cloud API | Ultra-Fast Response Times |
+
+### 🎯 Smart Features
+
+- **Function Detection**: Uses Tree-sitter to automatically find functions at cursor
+- **Docstring Replacement**: Intelligently updates existing documentation
+- **Visual Feedback**: Shows progress with spinner notifications and highlighting
+- **Error Handling**: Clear error messages with actionable feedback
 
 ---
 
 ## ⚙️ Installation
 
-Install `docscribe.nvim` using your favorite Neovim plugin manager:
+### Dependencies
 
-### [Packer.nvim](https://github.com/wbthomason/packer.nvim)
+- **[nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)** - For function detection
+- **[plenary.nvim](https://github.com/nvim-lua/plenary.nvim)** - For async operations
 
-```lua
-use 'AdrianMosnegutu/docscribe.nvim'
-```
+### Plugin Manager
 
-### [Lazy.nvim](https://github.com/folke/lazy.nvim)
-
+**Lazy.nvim:**
 ```lua
 {
   'AdrianMosnegutu/docscribe.nvim',
+  dependencies = {
+    'nvim-treesitter/nvim-treesitter',
+    'nvim-lua/plenary.nvim',
+  },
   config = function()
-    require('docscribe').setup({
-      -- your configuration here
-    })
+    require('docscribe').setup()
   end
 }
 ```
 
-### [Vim-Plug](https://github.com/junegunn/vim-plug)
-
-```vim
-Plug 'AdrianMosnegutu/docscribe.nvim'
+**Packer.nvim:**
+```lua
+use {
+  'AdrianMosnegutu/docscribe.nvim',
+  requires = {
+    'nvim-treesitter/nvim-treesitter',
+    'nvim-lua/plenary.nvim',
+  }
+}
 ```
-
-### [dein.vim](https://github.com/Shougo/dein.vim)
-
-```vim
-call dein#add('AdrianMosnegutu/docscribe.nvim')
-```
-
-### Dependencies
-
-- [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) - For parsing code and locating functions
-- [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) - For async operations
-- [Ollama](https://ollama.ai/) - Local LLM provider (must be installed separately)
 
 ---
 
 ## ⚙️ Configuration
 
-`docscribe.nvim` provides several configuration options to tailor the plugin to your needs. Below is the default configuration:
+### Default Setup
 
-````lua
+```lua
 require('docscribe').setup({
     ui = {
         highlight = {
-            style = "signature",        -- "signature" | "full" | "none" function highlight
-            timeout = 2000,             -- Time (ms) before highlight fades
-            bg = "#545454",             -- Highlight background color
+            style = "signature",        -- "signature" | "full" | "none"
+            timeout = 2000,             -- Highlight duration (ms)
+            bg = "#545454",             -- Highlight color
         },
     },
     llm = {
-        provider = "ollama",            -- Backend used for LLM (currently only "ollama" is supported)
-        model = "llama3.2",             -- Model to use with Ollama (any Ollama model works)
-    },
-    prompt_templates = {                -- Custom prompt templates for each language
-        -- Override existing or add new language templates
-        javascript = [[
-            You are a documentation assistant.
-
-            Generate a **JavaScript JSDoc** comment block for the function below. The output must:
-
-            1. Start with `/**` and end with `*/` (standard JSDoc format).
-            2. Include a **clear and concise function description**.
-            3. Document **each parameter** with `@param`, describing the name and purpose.
-            4. Include a `@returns` tag with a description of the return value.
-
-            Do NOT wrap the output in backticks or any Markdown formatting.
-            Do not include the function code in your output.
-            Just return the unwrapped JSDoc block as plain text.
-
-            ```javascript
-            {{code}}
-            ```
-        ]],
-        -- Add more language templates as needed
+        provider = "ollama",            -- "ollama" | "google" | "groq"
+        provider_opts = {
+            ollama = {
+                model = "llama3.2",
+            },
+            google = {
+                model = "gemini-1.5-flash",
+                api_key = os.getenv("GOOGLE_API_KEY"),
+            },
+            groq = {
+                model = "llama-3.1-8b-instant",
+                api_key = os.getenv("GROQ_API_KEY"),
+            },
+        },
     },
 })
-````
+```
 
-### Custom Prompt Templates
+### Provider Setup
 
-You can provide your own prompt templates for any language by adding them to the `prompt_templates` section of the configuration. Each template must include the `{{code}}` placeholder, which will be replaced with the actual function code during documentation generation.
+#### 🦙 Ollama (Local)
+```lua
+llm = {
+    provider = "ollama",
+    provider_opts = {
+        ollama = {
+            model = "llama3.2",  -- Any installed Ollama model
+        },
+    },
+}
+```
 
-To customize a template:
+**Setup Steps:**
+1. Install Ollama: [ollama.ai](https://ollama.ai/)
+2. Pull a model: `ollama pull llama3.2`
+3. No API key required
 
-1. Create a multiline string with clear instructions for the LLM
-2. Include the language-specific formatting requirements
-3. Make sure to have the `{{code}}` placeholder within code fences
+#### 🧠 Google Gemini (Cloud)
+```lua
+llm = {
+    provider = "google",
+    provider_opts = {
+        google = {
+            model = "gemini-1.5-flash",
+            api_key = os.getenv("GOOGLE_API_KEY"),
+        },
+    },
+}
+```
 
-### LLM Configuration
+**Setup Steps:**
+1. Get API key from [Google AI Studio](https://aistudio.google.com/)
+2. Set environment variable `GOOGLE_API_KEY` or replace `os.getenv("GOOGLE_API_KEY")` with your key
 
-Currently, `docscribe.nvim` supports Ollama as the LLM provider. You need to have Ollama installed and running on your system. You can use any model available in Ollama by specifying it in the `model` field.
+#### ⚡ Groq (Ultra-Fast)
+```lua
+llm = {
+    provider = "groq",
+    provider_opts = {
+        groq = {
+            model = "llama-3.1-8b-instant",
+            api_key = os.getenv("GROQ_API_KEY"),
+        },
+    },
+}
+```
+
+**Setup Steps:**
+1. Get API key from [console.groq.com](https://console.groq.com/)
+2. Set environment variable `GROQ_API_KEY` or replace `os.getenv("GROQ_API_KEY")` with your key
 
 ---
 
 ## 🚀 Usage
 
-### Basic Usage
+1. **Position your cursor** inside any function
+2. **Run the command**: `:DocscribeGenerate`
+3. **Watch documentation appear** with proper formatting
 
-1. Position your cursor inside or on a function
-2. Run the command:
+### Example Output
 
-```vim
-:DocscribeGenerate
+**JavaScript:**
+```javascript
+/**
+ * Calculates the total price including tax.
+ * @param {number} price - The base price of the item
+ * @param {number} taxRate - The tax rate as a decimal
+ * @returns {number} The total price including tax
+ */
+function calculateTotal(price, taxRate) {
+    return price * (1 + taxRate);
+}
 ```
 
-That's it! `docscribe.nvim` will:
+**C:**
+```c
+/**
+ * Finds the maximum value in an array.
+ * @param arr The array to search
+ * @param size The size of the array
+ * @return The maximum value found
+ */
+int find_max(int arr[], int size) {
+    // implementation
+}
+```
 
-- Detect the function at your cursor location.
-- Automatically remove any existing docstring right above the function.
-- Generate fresh documentation based on the function’s contents and language.
-- Insert the new docstring in the appropriate format and location.
-- Provide visual feedback with spinner and highlight animations.
+### Custom Prompt Templates
 
-### Tips for Best Results
+Override default templates for specific languages:
 
-- For optimal results, ensure your functions have clear parameter names and types
-- In JavaScript/TypeScript, using JSDoc-style type hints improves documentation quality
-- In C code, including descriptive parameter names enhances the generated documentation
-
----
-
-## 🛣️ Roadmap
-
-While v0.1.0 provides a stable experience, we have exciting features planned:
-
-- Support for more programming languages
-- Integration with additional LLM providers (OpenAI, Anthropic, etc.)
-- Customizable documentation styles
-- Batch documentation generation for multiple functions
+```lua
+require('docscribe').setup({
+    prompt_templates = {
+        python = [[
+            Generate a concise Python docstring in Google style.
+            Focus on Args and Returns sections.
+            {{code}}
+        ]],
+    },
+})
+```
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Whether it's reporting a bug, suggesting a feature, or submitting a pull request, your help is invaluable in shaping the future of `docscribe.nvim`.
+Contributions are welcome! Please feel free to submit pull requests, report bugs, or suggest features.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### Development Setup
+
+```bash
+git clone https://github.com/AdrianMosnegutu/docscribe.nvim.git
+cd docscribe.nvim
+
+# Run tests
+nvim --headless -c "PlenaryBustedDirectory tests" -c "qa!"
+```
 
 ---
 
@@ -247,12 +250,8 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 ---
 
-## ⭐️ Support
-
-If you find this project useful, consider giving it a ⭐️ on GitHub to show your support!
-
----
-
 <div align="center">
-Made with ❤️ for the Neovim community
+
+**Made with ❤️ for the Neovim community**
+
 </div>
