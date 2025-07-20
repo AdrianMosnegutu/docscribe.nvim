@@ -6,6 +6,7 @@ local config = require("docscribe.config")
 local providers = {
     ollama = require("docscribe.llm.providers.ollama"),
     google = require("docscribe.llm.providers.google"),
+    groq = require("docscribe.llm.providers.groq"),
 }
 
 local M = {}

@@ -13,7 +13,7 @@ local config = {
         },
     },
     llm = {
-        provider = "ollama", -- Backend used for LLM (e.g., ollama, google)
+        provider = "ollama", -- Backend used for LLM (e.g., ollama, google, groq)
         provider_opts = {
             ollama = {
                 model = "llama3.2", -- Default model used for docs
@@ -21,6 +21,10 @@ local config = {
             google = {
                 model = "gemini-1.5-flash",
                 api_key = os.getenv("GOOGLE_API_KEY"), -- API key for Google's Gemini
+            },
+            groq = {
+                model = "llama-3.1-8b-instant",      -- Default model used for docs
+                api_key = os.getenv("GROQ_API_KEY"), -- API key for Groq
             },
         },
     },
