@@ -73,17 +73,14 @@ function M.generate_docs(function_text, insertion_row, indentation_level)
 
     notification_utils.start_spinner_notification()
     llm_utils.generate_docs(function_text, function(docs, err)
-        is_generating = false
+        vim.schedule(function()
+            is_generating = false
 
-        if not docs then
-            vim.schedule(function()
+            if not docs then
                 notification_utils.replace_spinner_notification("Could not generate docs: " .. err, true)
                 highlight_utils.clear_highlight()
-            end)
-            return
-        end
-
-        vim.schedule(function()
+                return
+            end
             handle_successful_doc_generation(docs, insertion_row, indentation_level)
         end)
     end)
