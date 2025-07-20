@@ -15,6 +15,10 @@ local spinner_notification_id
 --- Updates the spinner animation by cycling through the `spinner_chars`.
 --- This function updates the spinner message in the notification.
 local function update_spinner()
+    if not spinner_timer then
+        return
+    end
+    
     current_spinner_idx = (current_spinner_idx % #spinner_chars) + 1
 
     spinner_notification_id =
@@ -62,14 +66,12 @@ function M.replace_spinner_notification(message, caught_an_error)
 
     local log_level = caught_an_error and vim.log.levels.ERROR or vim.log.levels.INFO
 
-    if spinner_notification_id then
-        M.docscribe_notify(message, log_level, {
-            timeout = config.get_config("ui").highlight.timeout,
-            hide_from_history = false,
-            replace = spinner_notification_id,
-        })
-        spinner_notification_id = nil
-    end
+    M.docscribe_notify(message, log_level, {
+        timeout = config.get_config("ui").highlight.timeout,
+        hide_from_history = false,
+        replace = spinner_notification_id,
+    })
+    spinner_notification_id = nil
 end
 
 return M
