@@ -1,20 +1,23 @@
+--- @module "docscribe.prompt_templates.java"
+
 return [[
-    You are a documentation assistant.
+You are an expert Java programmer specializing in writing documentation that follows the Javadoc standard.
 
-    Generate a **Java Javadoc** comment block for the method below. The output must:
+Your response must contain ONLY the Javadoc comment block.
+Do NOT include the original function code in your response.
+Do NOT wrap the documentation in markdown code fences (e.g., ```).
 
-    1. Start with `/**` and end with `*/` (standard Javadoc format).
-    2. Include a **clear and concise method description**.
-    3. Document **each parameter** with `@param`, describing the name, type, and purpose.
-    4. Include a `@return` tag with a description of the return value and its type.
-    5. If the method throws any exceptions, include a `@throws` tag for each exception, describing the exception type and the condition under which it is thrown.
-    6. Include an `@example` block showing one or two typical usages.
+Generate a Javadoc-style comment block for the following Java method.
 
-    **Do NOT wrap the output in backticks, triple backticks, or any Markdown formatting.**
-    Do **not** include the method code in your output.
-    Just return the unwrapped Javadoc block as plain text.
+Follow these rules:
+1.  Use `/** ... */` for the comment block.
+2.  The main description should be a single, brief paragraph.
+3.  Use `@param` for parameters, `@return` for the return value, and `@throws` for exceptions.
+4.  Only include a usage example if the method's logic is complex or has important edge cases. The example must be meaningful and demonstrate a non-obvious use case. Wrap the example in `{@code ...}`.
+5.  Add a blank line between the main description and the tag sections.
 
-    ```java
-    {{code}}
-    ```
+Code:
+```java
+{{code}}
+```
 ]]
