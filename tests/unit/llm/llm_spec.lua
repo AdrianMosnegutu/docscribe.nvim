@@ -26,7 +26,7 @@ describe("docscribe.llm", function()
     it("handles invalid LLM provider", function()
         mock_config.get_config = function(key)
             if key == "llm" then
-                return { provider = "invalid_provider" }
+                return { provider = "invalid_provider", provider_opts = {} }
             elseif key == "prompt_templates" then
                 return {
                     lua = "Here is a Lua template: {{code}}",
@@ -39,7 +39,7 @@ describe("docscribe.llm", function()
         M.generate_docs(code_snippet, function(docs, err_msg)
             assert.is_nil(docs)
             assert.is_not_nil(err_msg)
-            assert.is_equal(err_msg, 'Invalid LLM runner "invalid_provider"')
+            assert.is_equal(err_msg, 'Invalid LLM provider "invalid_provider"')
         end)
     end)
 end)
