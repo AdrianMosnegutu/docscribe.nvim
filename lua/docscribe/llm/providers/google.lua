@@ -66,7 +66,6 @@ function M.generate_response(prompt, callback, opts)
         },
     }
 
-    --- @diagnostic disable-next-line: missing-fields
     Job:new({
         command = "curl",
         args = {
@@ -87,4 +86,3 @@ function M.generate_response(prompt, callback, opts)
 end
 
 return M
-

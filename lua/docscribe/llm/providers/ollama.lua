@@ -24,7 +24,6 @@ end
 --- @param callback fun(docs: string|nil, err_msg: string|nil) Callback with the response or an error.
 --- @param opts table The Ollama model to use.
 function M.generate_response(prompt, callback, opts)
-    --- @diagnostic disable-next-line: missing-fields
     Job:new({
         command = "ollama",
         args = { "run", opts.model },
