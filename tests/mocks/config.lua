@@ -12,6 +12,14 @@ return {
                     ollama = {
                         model = "mock_model",
                     },
+                    google = {
+                        model = "mock_model",
+                        api_key = "mock_api_key",
+                    },
+                    groq = {
+                        model = "mock_model",
+                        api_key = "mock_api_key",
+                    },
                 },
             }
         end
