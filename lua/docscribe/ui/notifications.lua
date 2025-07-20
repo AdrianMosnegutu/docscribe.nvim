@@ -44,10 +44,20 @@ function M.start_spinner_notification()
         return
     end
 
-    current_spinner_idx = 0
+    current_spinner_idx = 1
+    spinner_notification_id =
+        M.docscribe_notify(spinner_chars[current_spinner_idx] .. " Generating docs...", vim.log.levels.WARN, {
+            timeout = false,
+            hide_from_history = true,
+        })
+
+    -- In the unlikely event that the notification could not be created
+    if not spinner_notification_id then
+        return
+    end
 
     spinner_timer = vim.loop.new_timer()
-    spinner_timer:start(0, spinner_interval, vim.schedule_wrap(update_spinner))
+    spinner_timer:start(spinner_interval, spinner_interval, vim.schedule_wrap(update_spinner))
 end
 
 --- Stops the spinner notification and replaces it with a final message.
